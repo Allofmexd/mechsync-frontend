@@ -72,7 +72,7 @@ export async function apiFetch(path, options = {}) {
   if (!response.ok) {
     const apiMessage =
       data && typeof data === 'object'
-        ? data.message ?? data.error ?? data.detail
+        ? data.message ?? data.error ?? data.detail ?? data.data?.message
         : data;
     const message =
       typeof apiMessage === 'string' && apiMessage.trim()

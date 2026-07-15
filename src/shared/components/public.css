@@ -1,0 +1,168 @@
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--color-ink);
+  font-size: 1.25rem;
+  letter-spacing: -0.035em;
+}
+
+.brand-logo svg {
+  width: 31px;
+  height: 31px;
+  overflow: visible;
+  fill: none;
+  stroke: var(--color-red-dark);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.9;
+}
+
+.brand-logo--compact {
+  color: #fff;
+  font-size: 1.08rem;
+}
+
+.brand-logo--compact svg {
+  width: 27px;
+  height: 27px;
+  stroke: var(--color-red);
+}
+
+.public-header {
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid rgb(255 255 255 / 15%);
+}
+
+.public-header__inner {
+  display: flex;
+  width: min(var(--content-width), calc(100% - 48px));
+  min-height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin: 0 auto;
+}
+
+.public-header__brand {
+  flex: 0 0 auto;
+}
+
+.public-header__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(22px, 3vw, 38px);
+  color: #b8bec7;
+  font-size: 0.91rem;
+}
+
+.public-header__nav a,
+.landing-footer a {
+  transition: color 150ms ease;
+}
+
+.public-header__nav a:hover,
+.landing-footer a:hover {
+  color: #fff;
+}
+
+.public-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 80px 20px 48px;
+  background:
+    radial-gradient(circle at 85% 85%, rgb(228 0 43 / 6%), transparent 20rem),
+    #f4f5f7;
+}
+
+.auth-page__back {
+  position: fixed;
+  top: 24px;
+  left: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #5f6672;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.auth-page__back:hover {
+  color: var(--color-red-dark);
+}
+
+.auth-card {
+  width: min(100%, 440px);
+  overflow: hidden;
+  padding: 29px 25px 0;
+  border: 1px solid #d9dde2;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgb(21 28 39 / 5%);
+}
+
+.auth-card__brand {
+  display: flex;
+  width: fit-content;
+  margin: 0 auto 25px;
+}
+
+.auth-card__footer {
+  margin: 25px -25px 0;
+  padding: 19px 20px;
+  border-top: 1px solid #e3e6eb;
+  color: #abb0b8;
+  background: #f7f8fb;
+  font-size: 0.64rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .public-header__nav {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .public-header__inner {
+    width: min(100% - 28px, var(--content-width));
+    min-height: 64px;
+  }
+
+  .public-header__actions .button--ghost {
+    display: none;
+  }
+
+  .public-header__actions .button--small {
+    min-height: 38px;
+    padding-inline: 13px;
+  }
+
+  .auth-page {
+    align-items: start;
+    padding: 68px 12px 28px;
+  }
+
+  .auth-page__back {
+    top: 20px;
+    left: 18px;
+  }
+
+  .auth-card {
+    padding-inline: 20px;
+  }
+
+  .auth-card__footer {
+    margin-inline: -20px;
+  }
+}
