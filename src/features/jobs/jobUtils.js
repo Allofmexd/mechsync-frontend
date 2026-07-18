@@ -78,6 +78,52 @@ export function validateCompletionAmounts(subtotal, iva, total) {
   };
 }
 
+export function validateJobLineInput(catalogId, quantity, unitPrice, catalogLabel) {
+  const normalizedId = String(catalogId ?? '').trim();
+  if (!/^\d+$/.test(normalizedId) || BigInt(normalizedId) <= 0n) {
+    return { valid: false, message: `Selecciona ${catalogLabel} del catálogo real.` };
+  }
+
+  const quantityCents = parseMoneyToCents(quantity);
+  if (quantityCents === null || quantityCents <= 0n) {
+    return { valid: false, message: 'La cantidad debe ser mayor que cero y tener máximo 2 decimales.' };
+  }
+
+  const unitPriceCents = parseMoneyToCents(unitPrice);
+  if (unitPriceCents === null) {
+    return { valid: false, message: 'El precio unitario debe ser no negativo y tener máximo 2 decimales.' };
+  }
+
+  return {
+    valid: true,
+    catalogId: Number(normalizedId),
+    quantity: centsToMoney(quantityCents),
+    unitPrice: centsToMoney(unitPriceCents),
+  };
+}
+
+export function calculateLineSubtotalPreview(quantity, unitPrice) {
+  const quantityCents = parseMoneyToCents(quantity);
+  const unitPriceCents = parseMoneyToCents(unitPrice);
+  if (quantityCents === null || quantityCents <= 0n || unitPriceCents === null) return null;
+
+  const scaledProduct = quantityCents * unitPriceCents;
+  const subtotalCents = (scaledProduct + 50n) / 100n;
+  return centsToMoney(subtotalCents);
+}
+
+export function getJobLineErrorMessage(error, action = 'administrar la línea real') {
+  if (error?.status === 400) return `No fue posible ${action}: revisa cantidad y precio unitario.`;
+  if (error?.status === 401) return 'La sesión expiró o no es válida. Inicia sesión nuevamente.';
+  if (error?.status === 403) return 'Solo administradores pueden administrar líneas reales.';
+  if (error?.status === 404) return 'El Job, catálogo o línea solicitada no existe.';
+  if (error?.status === 409) {
+    return 'El estado actual no permite modificar líneas o el servicio/pieza ya está registrado.';
+  }
+  if (error?.status >= 500) return 'El servidor no pudo completar la operación. Intenta nuevamente.';
+  return `No fue posible ${action}.`;
+}
+
 export function technicianName(technician, technicianId) {
   return technician?.fullName
     || [technician?.firstName, technician?.lastName].filter(Boolean).join(' ')
