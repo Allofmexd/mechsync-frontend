@@ -13,3 +13,7 @@ export function getStatusesByContext(context) {
 export function getVehicleIntakeStatuses() {
   return getStatusesByContext('VEHICLE_INTAKES');
 }
+
+export function getWorkOrderStatuses() {
+  return getStatusesByContext('WORK_ORDERS');
+}

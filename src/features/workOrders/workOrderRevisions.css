@@ -1,0 +1,481 @@
+.revision-create-page,
+.revision-history-page,
+.revision-detail-page {
+  color: #222a36;
+}
+
+.revision-form,
+.revision-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: 20px;
+}
+
+.revision-form__main,
+.revision-detail-main,
+.revision-detail-side {
+  display: grid;
+  gap: 18px;
+}
+
+.revision-section,
+.revision-panel,
+.revision-detail-card,
+.revision-totals {
+  border: 1px solid #e1c5ca;
+  background: #fff;
+}
+
+.revision-section > header,
+.revision-panel__header,
+.revision-detail-card > header {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 20px;
+  border-bottom: 1px solid #e1c5ca;
+  background: #f1f3ff;
+}
+
+.revision-section > header > div,
+.revision-panel__header > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.revision-section header > div > span {
+  color: #ad001f;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.revision-section h2,
+.revision-panel h2,
+.revision-detail-card h2,
+.revision-totals h2 {
+  margin: 0;
+  color: #3a424e;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.revision-panel__header small {
+  color: #77808c;
+}
+
+.revision-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 22px;
+}
+
+.revision-field {
+  display: grid;
+  gap: 7px;
+  color: #4d5663;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.revision-field--wide,
+.revision-selection-note {
+  grid-column: 1 / -1;
+}
+
+.revision-field input,
+.revision-field select,
+.revision-field textarea {
+  width: 100%;
+  min-height: 43px;
+  padding: 0 11px;
+  border: 1px solid #cdb5ba;
+  border-radius: 3px;
+  color: #252d39;
+  background: #fff;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: none;
+  outline: 0;
+}
+
+.revision-field textarea {
+  min-height: 92px;
+  padding: 11px;
+  resize: vertical;
+}
+
+.revision-field input:focus,
+.revision-field select:focus,
+.revision-field textarea:focus {
+  border-color: #ad001f;
+  box-shadow: 0 0 0 3px rgb(173 0 31 / 10%);
+}
+
+.revision-selection-note {
+  margin: 0;
+  padding: 13px;
+  border-left: 3px solid #ad001f;
+  color: #5b6470;
+  background: #faf5f6;
+  font-size: 0.78rem;
+}
+
+.revision-lines-editor {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+}
+
+.revision-line-editor {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 17px;
+  border: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.revision-line-editor__heading {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.revision-line-editor__heading button {
+  border: 0;
+  color: #a4001d;
+  background: transparent;
+  cursor: pointer;
+}
+
+.revision-totals {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.revision-totals > p,
+.revision-detail-card > small {
+  margin: 0;
+  color: #747c88;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.revision-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #3f4854;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.revision-checkbox input {
+  width: 18px;
+  height: 18px;
+}
+
+.revision-totals dl,
+.revision-detail-side dl {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+}
+
+.revision-totals dl div,
+.revision-detail-side dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eceef1;
+}
+
+.revision-totals dt,
+.revision-totals dd,
+.revision-detail-side dt,
+.revision-detail-side dd {
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+.revision-totals dd,
+.revision-detail-side dd {
+  font-weight: 750;
+  text-align: right;
+}
+
+.revision-total {
+  color: #95001b;
+  font-size: 0.9rem;
+}
+
+.revision-calculation-error {
+  color: #991b1b !important;
+}
+
+.revision-panel__header > div:last-child,
+.revision-actions,
+.revision-approval footer,
+.revision-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.revision-panel__alert {
+  margin: 18px;
+}
+
+.revision-loading,
+.revision-empty {
+  display: grid;
+  min-height: 110px;
+  place-items: center;
+  padding: 24px;
+  color: #737c88;
+  text-align: center;
+}
+
+.revision-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+  padding: 18px;
+}
+
+.revision-summary article {
+  display: grid;
+  gap: 8px;
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.revision-summary span,
+.revision-summary strong {
+  font-size: 0.72rem;
+}
+
+.revision-summary span {
+  color: #78818d;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.revision-table-wrap {
+  overflow-x: auto;
+}
+
+.revision-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.74rem;
+}
+
+.revision-table th,
+.revision-table td {
+  padding: 13px 12px;
+  border-bottom: 1px solid #eceef1;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.revision-table th {
+  color: #69727e;
+  background: #fafbfc;
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.revision-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px 18px;
+  color: #727a86;
+  font-size: 0.72rem;
+}
+
+.revision-pagination div {
+  display: flex;
+  gap: 8px;
+}
+
+.revision-pagination button {
+  padding: 7px 11px;
+  border: 1px solid #cbd0d7;
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.revision-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.revision-table td small {
+  display: block;
+  margin-top: 4px;
+  color: #717985;
+}
+
+.revision-actions a,
+.revision-actions button {
+  border: 0;
+  color: #97001b;
+  background: transparent;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.revision-actions button:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.revision-status,
+.revision-flags span {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #374151;
+  background: #e5e7eb;
+  font-size: 0.66rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.revision-status--draft { color: #854d0e; background: #fef3c7; }
+.revision-status--sent { color: #1e40af; background: #dbeafe; }
+.revision-status--approved { color: #166534; background: #dcfce7; }
+.revision-status--rejected,
+.revision-status--cancelled { color: #991b1b; background: #fee2e2; }
+.revision-status--superseded { color: #4b5563; background: #e5e7eb; }
+
+.revision-approval {
+  margin: 18px;
+  border: 1px solid #d6bac0;
+  background: #fff;
+}
+
+.revision-approval > header {
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.revision-approval h3,
+.revision-approval p {
+  margin: 0;
+}
+
+.revision-approval p {
+  margin-top: 5px;
+  color: #737b87;
+  font-size: 0.74rem;
+}
+
+.revision-approval header button {
+  border: 0;
+  background: transparent;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.revision-approval footer {
+  padding: 0 22px 22px;
+}
+
+.revision-panel--standalone {
+  width: 100%;
+}
+
+.revision-flags {
+  margin: -10px 0 20px;
+}
+
+.revision-flags span {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.revision-detail-card > p,
+.revision-detail-card > dl,
+.revision-detail-card > small {
+  margin: 18px;
+}
+
+.revision-detail-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.revision-detail-list div {
+  display: grid;
+  gap: 6px;
+}
+
+.revision-detail-list dt {
+  color: #7a838f;
+  font-size: 0.67rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.revision-detail-list dd {
+  margin: 0;
+  color: #374151;
+  line-height: 1.5;
+}
+
+@media (max-width: 1050px) {
+  .revision-form,
+  .revision-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .revision-totals {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .revision-fields,
+  .revision-line-editor,
+  .revision-summary,
+  .revision-detail-list {
+    grid-template-columns: 1fr;
+  }
+
+  .revision-field--wide,
+  .revision-line-editor__heading,
+  .revision-selection-note {
+    grid-column: auto;
+  }
+
+  .revision-panel__header,
+  .revision-section > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

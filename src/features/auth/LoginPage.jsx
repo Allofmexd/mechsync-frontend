@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PublicLayout from '../../shared/components/PublicLayout.jsx';
 import { saveAuthToken } from '../../shared/storage/authStorage.js';
-import { extractAccessToken, login } from './authService.js';
+import { extractAccessToken, extractAuthenticatedUser, login } from './authService.js';
 import './auth.css';
 
 function LoginPage() {
@@ -24,6 +24,7 @@ function LoginPage() {
     try {
       const response = await login({ email, password });
       const token = extractAccessToken(response);
+      const authenticatedUser = extractAuthenticatedUser(response);
 
       if (!token) {
         throw new Error('Login exitoso, pero no se encontró token en la respuesta.');
@@ -36,9 +37,22 @@ function LoginPage() {
       });
 
       const requestedPath = location.state?.from?.pathname;
-      const destination = requestedPath?.startsWith('/admin/')
-        ? requestedPath
-        : '/admin/customers';
+      const roles = Array.isArray(authenticatedUser?.roles)
+        ? authenticatedUser.roles.map((role) => String(role).replace(/^ROLE_/, ''))
+        : [];
+      const isAdministrator = roles.includes('ADMINISTRADOR');
+      const isTechnician = roles.includes('TECNICO');
+      let destination = '/';
+
+      if (requestedPath?.startsWith('/technician') && isTechnician) {
+        destination = requestedPath;
+      } else if (requestedPath?.startsWith('/admin') && isAdministrator) {
+        destination = requestedPath;
+      } else if (isTechnician) {
+        destination = '/technician';
+      } else if (isAdministrator) {
+        destination = '/admin/customers';
+      }
 
       navigate(destination, {
         replace: true,

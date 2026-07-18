@@ -1,0 +1,46 @@
+.protected-route-state {
+  display: grid;
+  min-height: 100vh;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 28px;
+  color: #596270;
+  background: #f4f5f7;
+  text-align: center;
+}
+
+.protected-route-state strong {
+  color: #151c27;
+  font-size: 1.5rem;
+}
+
+.protected-route-state p {
+  max-width: 520px;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.protected-route-loader {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #d9dde3;
+  border-top-color: #b60022;
+  border-radius: 50%;
+  animation: protected-route-spin 700ms linear infinite;
+}
+
+.protected-route-state--forbidden,
+.protected-route-state--error {
+  border-top: 4px solid #b60022;
+}
+
+@keyframes protected-route-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .protected-route-loader {
+    animation: none;
+  }
+}

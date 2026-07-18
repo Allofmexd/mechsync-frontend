@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { getApiErrorMessage } from '../../shared/api/apiErrorMessages';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { getAdminApiErrorMessage, getApiErrorMessage } from '../../shared/api/apiErrorMessages';
 import { getUserById } from '../users/usersService';
-import { getCustomerById } from './customersService';
+import { deleteCustomer, getCustomerById, updateCustomer } from './customersService';
+import '../../shared/components/crudActions.css';
 import './customers.css';
 
 function unwrap(response) {
@@ -18,11 +19,36 @@ function formatDate(value) {
 
 export default function CustomerDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [customer, setCustomer] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [profileError, setProfileError] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [working, setWorking] = useState('');
+  const [actionError, setActionError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  async function handleUpdate(event) {
+    event.preventDefault();
+    const address = String(new FormData(event.currentTarget).get('address') || '').trim();
+    setWorking('update'); setActionError(''); setSuccess('');
+    try {
+      setCustomer(unwrap(await updateCustomer(id, { address: address || null })));
+      setEditing(false);
+      setSuccess('Cliente actualizado correctamente.');
+    } catch (requestError) {
+      setActionError(getAdminApiErrorMessage(requestError, 'actualizar el cliente'));
+    } finally { setWorking(''); }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm('¿Eliminar este perfil Customer? El usuario asociado no se eliminará.')) return;
+    setWorking('delete'); setActionError(''); setSuccess('');
+    try { await deleteCustomer(id); navigate('/admin/customers', { replace: true }); }
+    catch (requestError) { setActionError(getAdminApiErrorMessage(requestError, 'eliminar el cliente')); setWorking(''); }
+  }
 
   useEffect(() => {
     let active = true;
@@ -108,14 +134,8 @@ export default function CustomerDetailPage() {
           <p>ID de cliente: #{customer.id} · ID de usuario: #{customer.userId}</p>
         </div>
         <div className="customer-detail-heading__actions">
-          <button
-            className="admin-button admin-button--secondary"
-            type="button"
-            disabled
-            title="La edición combinada de User y Customer no forma parte de esta fase"
-          >
-            Editar cliente
-          </button>
+          <button className="admin-button admin-button--secondary" type="button" onClick={() => setEditing((value) => !value)} disabled={Boolean(working)}>Editar dirección</button>
+          <button className="admin-button crud-button--danger" type="button" onClick={handleDelete} disabled={Boolean(working)}>{working === 'delete' ? 'Eliminando...' : 'Eliminar'}</button>
           <Link
             className="admin-button admin-button--primary"
             to={`/admin/vehicles/new?customerId=${customer.id}`}
@@ -131,6 +151,9 @@ export default function CustomerDetailPage() {
           <p>{profileError} Se muestran únicamente los datos disponibles de Customer.</p>
         </div>
       )}
+      {actionError && <div className="admin-alert admin-alert--error" role="alert"><span>!</span><p>{actionError}</p></div>}
+      {success && <div className="admin-alert admin-alert--success" role="status"><span>✓</span><p>{success}</p></div>}
+      {editing && <form className="crud-editor" onSubmit={handleUpdate}><header><h2>Editar Customer</h2><p>La identidad y credenciales se administran desde Usuarios.</p></header><div className="crud-fields"><label className="crud-field crud-field--wide"><span>Dirección</span><textarea name="address" maxLength="255" defaultValue={customer.address ?? ''} disabled={Boolean(working)} /></label></div><footer><button className="admin-button admin-button--primary" type="submit" disabled={Boolean(working)}>{working === 'update' ? 'Guardando...' : 'Guardar cambios'}</button><button className="admin-button admin-button--secondary" type="button" onClick={() => setEditing(false)} disabled={Boolean(working)}>Cancelar</button></footer></form>}
 
       <div className="customer-detail-grid">
         <aside className="customer-profile-card">

@@ -56,10 +56,19 @@ conectarse a `POST /users`, porque ese endpoint es administrativo y requiere aut
 - `/admin/vehicles`: listado paginado conectado a `GET /vehicles`.
 - `/admin/vehicles/new`: alta mediante `POST /vehicles` para un Customer existente.
 - `/admin/vehicles/:id`: detalle conectado a `GET /vehicles/{id}`.
+- `/admin/vehicle-intakes`: gestión paginada conectada a `GET /vehicle-intakes`.
 - `/admin/vehicle-intakes/new`: alta conectada a vehículos, estados, técnicos y `POST /vehicle-intakes`.
+- `/admin/vehicle-intakes/:id`: detalle conectado a `GET /vehicle-intakes/{id}`.
+- `/admin/work-orders`: listado de órdenes de servicio conectado a `GET /work-orders`.
+- `/admin/work-orders/new`: creación conectada a `POST /work-orders`.
+- `/admin/work-orders/:id`: detalle de Work Order e historial real de cotizaciones.
+- `/admin/work-orders/:workOrderId/revisions`: revisión vigente, aprobación final e historial.
+- `/admin/work-orders/:workOrderId/revisions/:revisionId`: detalle de snapshot versionado.
+- `/admin/quotations/new`: creación real de Work Order Revision.
+- `/admin/jobs`: placeholder de trabajos realizados, pendiente de API.
 
-Ambas rutas requieren una sesión con JWT. Si no existe token local, la navegación redirige a
-`/login`. Los endpoints de Users y Customers requieren un usuario con rol `ADMINISTRADOR`; la
+Todas las rutas administrativas requieren una sesión con JWT y rol `ADMINISTRADOR`. Si no existe token local, la navegación redirige a
+`/login`. Los endpoints de Users y Customers requieren un usuario con ese rol; la
 autorización definitiva siempre la aplica Spring Security en el backend.
 
 La contraseña temporal del formulario de alta se envía únicamente durante `POST /users`: no se
@@ -70,9 +79,93 @@ El alta de Vehicle Intake obtiene `statusId` desde
 técnicos consume `GET /technicians`; si la respuesta está vacía, el ingreso puede registrarse sin
 asignación y `technicianId` se omite del request.
 
-`/admin/vehicle-intakes/new` representa exclusivamente el formulario de **Nuevo ingreso**. Todavía
-no existe una ruta frontend `/admin/vehicle-intakes` para gestión, listado o edición de ingresos;
-esa vista se implementará posteriormente como una funcionalidad independiente.
+`/admin/vehicle-intakes/new` representa exclusivamente el formulario de **Nuevo ingreso** y
+`/admin/vehicle-intakes` es la gestión/listado independiente. El listado usa los catálogos reales
+para mostrar nombres de estado y enriquece vehículos y técnicos únicamente mediante endpoints
+existentes.
+
+La creación de Work Orders obtiene `vehicleIntakeId`, `technicianId` y `statusId` de respuestas
+reales. El contrato actual exige que exista un técnico y que subtotal, IVA y total se capturen de
+forma explícita; el frontend no hardcodea identificadores ni inventa reglas financieras.
+
+## Cotizaciones versionadas
+
+El frontend consume Work Order Revisions exclusivamente bajo `/api/v1`. No existe `/api/v2`:
+“Work Orders v2” identifica el modelo interno de snapshots, no una versión pública de la API.
+
+La vista `/admin/quotations/new` selecciona una Work Order y un técnico reales, permite capturar
+líneas snapshot personalizadas sin `serviceId`/`partId`, calcula subtotal, IVA y total como ayuda
+visual y envía los importes para que el backend los vuelva a calcular y validar. Los catálogos
+productivos de servicios y piezas siguen pendientes; por ello no se inventan IDs y las listas pueden
+quedar vacías conforme al contrato backend.
+
+El detalle e historial permiten enviar, aprobar, rechazar y cancelar según el estado de la revisión.
+La aprobación solicita nombre del aceptante y código de método; no hardcodea IDs ni simula éxito.
+Los endpoints `current` y `final-approved` distinguen la revisión vigente de la aprobación final.
+
+Esta integración requiere que el entorno backend tenga aplicadas las migraciones de database/v2
+`001`–`005` y sus seeds. Mientras AWS u otro entorno no las tenga, los errores `5xx` de estos
+endpoints se muestran como infraestructura pendiente y el formulario no informa éxito.
+
+## Rutas del técnico
+
+- `/technician`: panel con métricas derivadas de las Work Orders asignadas.
+- `/technician/dashboard`: alias que redirige al panel técnico.
+- `/technician/work-orders`: listado compacto de órdenes propias.
+- `/technician/assigned-work-orders`: listado asignado con filtros por estado, fecha, placa o folio.
+- `/technician/work-orders/:id`: detalle seguro de una orden asignada.
+
+Estas rutas requieren JWT y rol `TECNICO`. El login utiliza los roles devueltos por `POST /auth/login`
+para dirigir al usuario a su sección y `ProtectedRoute` confirma la identidad con `GET /auth/me`.
+
+La asociación temporal se resuelve así:
+
+1. `GET /auth/me` proporciona el `id` del usuario autenticado.
+2. `GET /technicians` permite localizar el registro cuyo `userId` coincide.
+3. `GET /work-orders` se pagina completamente y se filtra en cliente por `technicianId`.
+
+Este filtrado evita presentar órdenes ajenas como propias, pero no sustituye autorización ni
+filtrado backend. Es temporal hasta que exista `GET /work-orders/assigned-to-me`; el endpoint actual
+todavía transmite al navegador del técnico el listado general autorizado por Spring Security.
+Work Orders son planificación/cotización y no equivalen a Jobs o trabajo ejecutado.
+
+## Endpoints pendientes
+
+Estas rutas son contratos candidatos documentados como brecha. No se consumen desde el frontend
+hasta que exista una implementación productiva en el backend.
+
+### Trabajos realizados
+
+- `GET /jobs`
+- `GET /jobs/{id}`
+- `POST /jobs`
+- `PUT /jobs/{id}`
+- `PATCH /jobs/{id}/status`
+
+### Reportes de servicio
+
+- `GET /service-reports`
+- `GET /service-reports/{id}`
+- `POST /service-reports`
+
+### Experiencia del técnico
+
+- `GET /technicians/me`
+- `GET /work-orders/assigned-to-me`
+- `GET /technician/dashboard`
+- `PATCH /work-orders/{id}/status`
+- `PATCH /work-orders/{id}/start`
+- `PATCH /work-orders/{id}/complete`
+- `GET /jobs/assigned-to-me`
+- `GET /service-reports/technician/me`
+
+Las acciones de iniciar trabajo, registrar diagnóstico, agregar observaciones, solicitar refacciones
+y generar reportes permanecen deshabilitadas. No se simula éxito ni se reutiliza Work Orders como
+si fuera un Job.
+
+También permanecen pendientes catálogos productivos de servicios y piezas. Las cotizaciones usan el
+payload embebido de snapshots ya soportado; Jobs, Service Reports y PDF continúan deshabilitados y
+no simulan operaciones exitosas.
 
 ## Variables de entorno
 
@@ -114,4 +207,4 @@ mechsync-frontend/
             └── apiClient.js
 ```
 
-`apiClient.js` centraliza la URL base, encabezados JSON, respuestas sin contenido, errores de API y soporte opcional para tokens Bearer. La pantalla inicial solo consume los endpoints públicos de health; la autenticación y los módulos de negocio se incorporarán en fases posteriores.
+`apiClient.js` centraliza la URL base, encabezados JSON, respuestas sin contenido, errores de API y soporte para tokens Bearer. Los servicios de cada feature reutilizan este cliente y las rutas administrativas quedan protegidas por el mecanismo común de sesión.

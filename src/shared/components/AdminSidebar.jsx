@@ -34,12 +34,36 @@ function IntakeIcon() {
   );
 }
 
+function OrdersIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4M9 19h6" />
+    </svg>
+  );
+}
+
+function PendingIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3a9 9 0 1 0 9 9M12 7v5l3 2" />
+    </svg>
+  );
+}
+
 function LogoutIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M10 17l5-5-5-5M15 12H3M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
     </svg>
   );
+}
+
+function UsersIcon() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8" /></svg>;
+}
+
+function CatalogIcon() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16M8 4v4M16 10v4M10 16v4" /></svg>;
 }
 
 export default function AdminSidebar() {
@@ -58,21 +82,51 @@ export default function AdminSidebar() {
       </div>
 
       <nav className="admin-sidebar__nav" aria-label="Navegación administrativa">
+        <span className="admin-sidebar__group">Administración</span>
+        <NavLink to="/admin/users">
+          <UsersIcon />
+          <span>Usuarios</span>
+        </NavLink>
         <NavLink to="/admin/customers" end>
           <CustomersIcon />
           <span>Clientes</span>
         </NavLink>
-        <NavLink to="/admin/customers/new">
+        <NavLink to="/admin/technicians">
           <AddCustomerIcon />
-          <span>Registrar cliente</span>
+          <span>Técnicos</span>
         </NavLink>
+
+        <span className="admin-sidebar__group">Operación</span>
         <NavLink to="/admin/vehicles">
           <VehiclesIcon />
           <span>Vehículos</span>
         </NavLink>
-        <NavLink to="/admin/vehicle-intakes/new">
+        <NavLink to="/admin/vehicle-intakes" end>
           <IntakeIcon />
-          <span>Nuevo ingreso</span>
+          <span>Ingresos</span>
+        </NavLink>
+        <NavLink to="/admin/work-orders" end>
+          <OrdersIcon />
+          <span>Órdenes de servicio</span>
+        </NavLink>
+
+        <span className="admin-sidebar__group">Cotizaciones</span>
+        <NavLink to="/admin/quotations/new">
+          <PendingIcon />
+          <span>Nueva cotización</span>
+        </NavLink>
+
+        <span className="admin-sidebar__group">Catálogos</span>
+        <NavLink to="/admin/catalogs">
+          <CatalogIcon />
+          <span>Estados</span>
+        </NavLink>
+
+        <span className="admin-sidebar__group">Pendientes</span>
+        <NavLink to="/admin/jobs">
+          <PendingIcon />
+          <span>Trabajos realizados</span>
+          <small className="admin-sidebar__pending">Pendiente</small>
         </NavLink>
       </nav>
 

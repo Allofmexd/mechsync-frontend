@@ -27,3 +27,18 @@ export function getCustomerById(customerId) {
     token: getRequiredAuthToken(),
   });
 }
+
+export function updateCustomer(customerId, payload) {
+  return apiFetch(`/customers/${customerId}`, {
+    method: 'PUT',
+    token: getRequiredAuthToken(),
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteCustomer(customerId) {
+  return apiFetch(`/customers/${customerId}`, {
+    method: 'DELETE',
+    token: getRequiredAuthToken(),
+  });
+}

@@ -1,43 +1,43 @@
 import { apiFetch } from '../../shared/api/apiClient';
 import { getRequiredAuthToken } from '../../shared/storage/authStorage';
 
-export function getVehicleIntakes({ page = 0, size = 20 } = {}) {
+export function getWorkOrders({ page = 0, size = 20 } = {}) {
   const searchParams = new URLSearchParams({
     page: String(page),
     size: String(size),
   });
 
-  return apiFetch(`/vehicle-intakes?${searchParams.toString()}`, {
+  return apiFetch(`/work-orders?${searchParams.toString()}`, {
     method: 'GET',
     token: getRequiredAuthToken(),
   });
 }
 
-export function getVehicleIntakeById(intakeId) {
-  return apiFetch(`/vehicle-intakes/${intakeId}`, {
+export function getWorkOrderById(workOrderId) {
+  return apiFetch(`/work-orders/${workOrderId}`, {
     method: 'GET',
     token: getRequiredAuthToken(),
   });
 }
 
-export function createVehicleIntake(payload) {
-  return apiFetch('/vehicle-intakes', {
+export function createWorkOrder(payload) {
+  return apiFetch('/work-orders', {
     method: 'POST',
     token: getRequiredAuthToken(),
     body: JSON.stringify(payload),
   });
 }
 
-export function updateVehicleIntake(intakeId, payload) {
-  return apiFetch(`/vehicle-intakes/${intakeId}`, {
+export function updateWorkOrder(workOrderId, payload) {
+  return apiFetch(`/work-orders/${workOrderId}`, {
     method: 'PUT',
     token: getRequiredAuthToken(),
     body: JSON.stringify(payload),
   });
 }
 
-export function deleteVehicleIntake(intakeId) {
-  return apiFetch(`/vehicle-intakes/${intakeId}`, {
+export function deleteWorkOrder(workOrderId) {
+  return apiFetch(`/work-orders/${workOrderId}`, {
     method: 'DELETE',
     token: getRequiredAuthToken(),
   });

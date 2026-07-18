@@ -27,3 +27,27 @@ export function getUserById(userId) {
     token: getRequiredAuthToken(),
   });
 }
+
+export function updateUser(userId, payload) {
+  return apiFetch(`/users/${userId}`, {
+    method: 'PUT',
+    token: getRequiredAuthToken(),
+    body: JSON.stringify(payload),
+  });
+}
+
+export function resetUserPassword(userId, newPassword) {
+  return apiFetch(`/users/${userId}/password`, {
+    method: 'PATCH',
+    token: getRequiredAuthToken(),
+    body: JSON.stringify({ newPassword }),
+  });
+}
+
+export function changeUserRole(userId, role) {
+  return apiFetch(`/users/${userId}/role`, {
+    method: 'PATCH',
+    token: getRequiredAuthToken(),
+    body: JSON.stringify({ role }),
+  });
+}

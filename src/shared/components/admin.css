@@ -32,8 +32,24 @@
 
 .admin-sidebar__nav {
   display: grid;
+  min-height: 0;
   gap: 7px;
   margin-top: 28px;
+  padding-right: 3px;
+  overflow-y: auto;
+}
+
+.admin-sidebar__group {
+  margin: 16px 12px 2px;
+  color: #747f8e;
+  font-size: 0.58rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.admin-sidebar__group:first-child {
+  margin-top: 0;
 }
 
 .admin-sidebar__nav a,
@@ -61,6 +77,21 @@
 
 .admin-sidebar__nav a.active {
   box-shadow: inset 3px 0 0 var(--color-red);
+}
+
+.admin-sidebar__nav a > span {
+  min-width: 0;
+}
+
+.admin-sidebar__pending {
+  margin-left: auto;
+  padding: 3px 6px;
+  border-radius: 999px;
+  color: #fdba74;
+  background: rgb(154 52 18 / 28%);
+  font-size: 0.52rem;
+  font-weight: 850;
+  text-transform: uppercase;
 }
 
 .admin-sidebar svg {
@@ -276,6 +307,8 @@
     display: flex;
     gap: 7px;
     margin-top: 14px;
+    padding-right: 0;
+    overflow-y: hidden;
     overflow-x: auto;
   }
 

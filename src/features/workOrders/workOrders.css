@@ -1,0 +1,487 @@
+.work-orders-page,
+.work-order-create-page,
+.work-order-detail-page {
+  color: #222a36;
+}
+
+.work-orders-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 25px;
+}
+
+.work-orders-heading h1 {
+  margin: 0;
+  color: #151c27;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.work-orders-heading p:not(.admin-eyebrow) {
+  margin: 9px 0 0;
+  color: #737b87;
+  font-size: 0.9rem;
+}
+
+.work-orders-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.work-orders-summary article {
+  display: grid;
+  gap: 7px;
+  min-height: 118px;
+  padding: 20px;
+  border: 1px solid #e0e3e7;
+  background: #fff;
+}
+
+.work-orders-summary span,
+.work-orders-summary small {
+  color: #7a828e;
+  font-size: 0.7rem;
+}
+
+.work-orders-summary span {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.work-orders-summary strong {
+  color: #151c27;
+  font-size: 1.75rem;
+}
+
+.work-orders-panel,
+.work-order-section,
+.work-order-financial,
+.work-order-detail-card,
+.work-order-detail-side section {
+  border: 1px solid #e1c5ca;
+  background: #fff;
+}
+
+.work-orders-toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 2fr) minmax(190px, 1fr);
+  gap: 14px;
+  padding: 19px;
+  border-bottom: 1px solid #e1c5ca;
+  background: #f1f3ff;
+}
+
+.work-orders-toolbar label,
+.work-order-field,
+.work-order-financial label {
+  display: grid;
+  gap: 7px;
+  color: #4d5663;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.work-orders-toolbar input,
+.work-orders-toolbar select,
+.work-order-field input,
+.work-order-field select,
+.work-order-field textarea,
+.work-order-financial input {
+  width: 100%;
+  min-height: 43px;
+  padding: 0 11px;
+  border: 1px solid #cdb5ba;
+  border-radius: 3px;
+  color: #252d39;
+  background: #fff;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: none;
+  outline: 0;
+}
+
+.work-order-field textarea {
+  min-height: 110px;
+  padding: 12px;
+  resize: vertical;
+}
+
+.work-orders-toolbar input:focus,
+.work-orders-toolbar select:focus,
+.work-order-field input:focus,
+.work-order-field select:focus,
+.work-order-field textarea:focus,
+.work-order-financial input:focus {
+  border-color: #ad001f;
+  box-shadow: 0 0 0 3px rgb(173 0 31 / 10%);
+}
+
+.work-orders-panel .admin-alert {
+  margin: 18px;
+}
+
+.work-orders-state,
+.work-orders-filter-empty {
+  display: grid;
+  min-height: 190px;
+  place-items: center;
+  padding: 36px;
+  color: #747c88;
+  text-align: center;
+}
+
+.work-orders-state p {
+  margin: -55px 0 0;
+}
+
+.work-orders-table-wrap {
+  overflow-x: auto;
+}
+
+.work-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.work-orders-table th,
+.work-orders-table td {
+  padding: 15px 13px;
+  border-bottom: 1px solid #eceef1;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.work-orders-table th {
+  color: #666f7b;
+  background: #fafbfc;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.work-orders-table td > a:not(.table-action-link) {
+  color: #8f0019;
+  font-weight: 750;
+}
+
+.work-order-table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.work-order-table-actions a {
+  white-space: nowrap;
+}
+
+.work-order-status {
+  display: inline-flex;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #166534;
+  background: #dcfce7;
+  font-size: 0.65rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.work-order-status--large {
+  padding: 9px 14px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.work-orders-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 19px;
+  color: #727a86;
+  font-size: 0.75rem;
+}
+
+.work-orders-pagination div {
+  display: flex;
+  gap: 8px;
+}
+
+.work-orders-pagination button {
+  padding: 8px 12px;
+  border: 1px solid #cbd0d7;
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.work-orders-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.work-order-integration {
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #166534;
+  background: #dcfce7;
+  font-size: 0.68rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.work-order-integration--blocked {
+  color: #854d0e;
+  background: #fef3c7;
+}
+
+.work-order-info {
+  color: #854d0e;
+  background: #fffbeb;
+  border-color: #fcd34d;
+}
+
+.work-order-info > span:first-child {
+  color: #fff;
+  background: #d97706;
+}
+
+.work-order-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  align-items: start;
+  gap: 20px;
+}
+
+.work-order-form__main {
+  display: grid;
+  gap: 18px;
+}
+
+.work-order-section > header,
+.work-order-detail-card > header {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  border-bottom: 1px solid #e1c5ca;
+  background: #f1f3ff;
+}
+
+.work-order-section > header span {
+  color: #ad001f;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.work-order-section h2,
+.work-order-detail-card h2,
+.work-order-detail-side h2,
+.work-order-financial h2 {
+  margin: 0;
+  color: #3a424e;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.work-order-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 23px;
+}
+
+.work-order-field--full,
+.work-order-intake-preview {
+  grid-column: 1 / -1;
+}
+
+.work-order-field span small {
+  color: #8a919c;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.work-order-intake-preview {
+  display: grid;
+  gap: 7px;
+  padding: 16px;
+  border-left: 3px solid #ad001f;
+  background: #faf5f6;
+}
+
+.work-order-intake-preview span,
+.work-order-intake-preview small {
+  color: #7d8590;
+  font-size: 0.68rem;
+}
+
+.work-order-pending-section > div {
+  padding: 23px;
+  color: #5d6571;
+}
+
+.work-order-pending-section strong {
+  color: #9a3412;
+}
+
+.work-order-pending-section p {
+  line-height: 1.55;
+}
+
+.work-order-financial {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  gap: 18px;
+  padding: 23px;
+}
+
+.work-order-financial > p {
+  margin: 0;
+  color: #747c88;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.work-order-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  align-items: start;
+  gap: 20px;
+}
+
+.work-order-detail-main,
+.work-order-detail-side {
+  display: grid;
+  gap: 18px;
+}
+
+.work-order-detail-card > p,
+.work-order-lines-pending > button {
+  margin: 20px;
+}
+
+.work-order-detail-card > p {
+  color: #555e6b;
+  line-height: 1.6;
+}
+
+.work-order-identity {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  padding: 23px;
+}
+
+.work-order-identity div {
+  display: grid;
+  gap: 7px;
+}
+
+.work-order-identity span,
+.work-order-identity small {
+  color: #7c8490;
+  font-size: 0.68rem;
+}
+
+.work-order-identity span {
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.work-order-identity a {
+  color: #96001b;
+  font-weight: 800;
+}
+
+.work-order-lines-pending header {
+  justify-content: space-between;
+}
+
+.work-order-lines-pending header span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: #9a3412;
+  background: #ffedd5;
+  font-size: 0.62rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.work-order-detail-side section {
+  padding: 21px;
+}
+
+.work-order-detail-side dl {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0 0;
+}
+
+.work-order-detail-side dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eceef1;
+}
+
+.work-order-detail-side dt,
+.work-order-detail-side dd {
+  font-size: 0.72rem;
+}
+
+.work-order-detail-side dt {
+  color: #7b838e;
+}
+
+.work-order-detail-side dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.work-order-detail-side .work-order-total {
+  color: #8f0019;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1050px) {
+  .work-order-form,
+  .work-order-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .work-order-financial {
+    position: static;
+  }
+}
+
+@media (max-width: 700px) {
+  .work-orders-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .work-orders-summary,
+  .work-orders-toolbar,
+  .work-order-fields,
+  .work-order-identity {
+    grid-template-columns: 1fr;
+  }
+
+  .work-order-field--full,
+  .work-order-intake-preview {
+    grid-column: auto;
+  }
+}

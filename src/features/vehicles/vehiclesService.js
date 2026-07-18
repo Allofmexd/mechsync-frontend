@@ -27,3 +27,18 @@ export function createVehicle(payload) {
     body: JSON.stringify(payload),
   });
 }
+
+export function updateVehicle(vehicleId, payload) {
+  return apiFetch(`/vehicles/${vehicleId}`, {
+    method: 'PUT',
+    token: getRequiredAuthToken(),
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteVehicle(vehicleId) {
+  return apiFetch(`/vehicles/${vehicleId}`, {
+    method: 'DELETE',
+    token: getRequiredAuthToken(),
+  });
+}
