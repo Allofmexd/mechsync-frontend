@@ -109,6 +109,10 @@ export default function AdminSidebar() {
           <OrdersIcon />
           <span>Órdenes de servicio</span>
         </NavLink>
+        <NavLink to="/admin/jobs">
+          <PendingIcon />
+          <span>Trabajos realizados</span>
+        </NavLink>
 
         <span className="admin-sidebar__group">Cotizaciones</span>
         <NavLink to="/admin/quotations/new">
@@ -122,12 +126,6 @@ export default function AdminSidebar() {
           <span>Estados</span>
         </NavLink>
 
-        <span className="admin-sidebar__group">Pendientes</span>
-        <NavLink to="/admin/jobs">
-          <PendingIcon />
-          <span>Trabajos realizados</span>
-          <small className="admin-sidebar__pending">Pendiente</small>
-        </NavLink>
       </nav>
 
       <button className="admin-sidebar__logout" type="button" onClick={handleLogout}>

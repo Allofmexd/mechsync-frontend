@@ -5,7 +5,9 @@ import CatalogsPage from '../features/catalogs/CatalogsPage.jsx';
 import CustomerCreatePage from '../features/customers/CustomerCreatePage.jsx';
 import CustomerDetailPage from '../features/customers/CustomerDetailPage.jsx';
 import CustomersListPage from '../features/customers/CustomersListPage.jsx';
-import JobsPlaceholderPage from '../features/jobs/JobsPlaceholderPage.jsx';
+import JobCreatePage from '../features/jobs/JobCreatePage.jsx';
+import JobDetailPage from '../features/jobs/JobDetailPage.jsx';
+import JobsListPage from '../features/jobs/JobsListPage.jsx';
 import LandingPage from '../features/landing/LandingPage.jsx';
 import QuotationCreatePage from '../features/quotations/QuotationCreatePage.jsx';
 import TechnicianAssignedWorkOrdersPage from '../features/technician/TechnicianAssignedWorkOrdersPage.jsx';
@@ -59,7 +61,9 @@ function AppRouter() {
           <Route path="/admin/quotations/new" element={<QuotationCreatePage />} />
           <Route path="/admin/technicians" element={<TechniciansListPage />} />
           <Route path="/admin/catalogs" element={<CatalogsPage />} />
-          <Route path="/admin/jobs" element={<JobsPlaceholderPage />} />
+          <Route path="/admin/jobs" element={<JobsListPage />} />
+          <Route path="/admin/jobs/new" element={<JobCreatePage />} />
+          <Route path="/admin/jobs/:id" element={<JobDetailPage />} />
         </Route>
       </Route>
       <Route element={<ProtectedRoute allowedRoles={['TECNICO']} />}>
