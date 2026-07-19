@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getTechnicians } from '../technicians/techniciansService';
+import { getServiceReportByJobId } from '../serviceReports/serviceReportsService';
+import { unwrapServiceReportData } from '../serviceReports/serviceReportUtils';
 import JobLineSection from './JobLineSection';
 import {
   addJobPart,
@@ -73,6 +75,9 @@ export default function JobDetailPage() {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [completion, setCompletion] = useState({ subtotal: '0.00', iva: '0.00', total: '0.00', notes: '' });
   const [cancellationNotes, setCancellationNotes] = useState('');
+  const [serviceReport, setServiceReport] = useState(null);
+  const [serviceReportLoading, setServiceReportLoading] = useState(false);
+  const [serviceReportError, setServiceReportError] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -130,6 +135,38 @@ export default function JobDetailPage() {
     loadPage();
     return () => { active = false; };
   }, [id]);
+
+  useEffect(() => {
+    if (job?.status !== 'COMPLETADO') {
+      setServiceReport(null);
+      setServiceReportLoading(false);
+      setServiceReportError('');
+      return undefined;
+    }
+
+    let active = true;
+    setServiceReportLoading(true);
+    setServiceReportError('');
+
+    getServiceReportByJobId(id)
+      .then((response) => {
+        if (active) setServiceReport(unwrapServiceReportData(response));
+      })
+      .catch((requestError) => {
+        if (!active) return;
+        setServiceReport(null);
+        if (requestError?.status !== 404) {
+          if (requestError?.status === 401) setServiceReportError('La sesión expiró o no es válida. Inicia sesión nuevamente.');
+          else if (requestError?.status === 403) setServiceReportError('No tienes permiso para ver reportes de servicio.');
+          else setServiceReportError('No fue posible consultar el reporte de servicio de este trabajo.');
+        }
+      })
+      .finally(() => {
+        if (active) setServiceReportLoading(false);
+      });
+
+    return () => { active = false; };
+  }, [id, job?.status]);
 
   const technician = useMemo(
     () => technicians.find((item) => String(item.id) === String(job?.technicianId)),
@@ -295,7 +332,7 @@ export default function JobDetailPage() {
         <span><strong>Cotización aprobada:</strong> autorización y snapshot.</span>
         <span><strong>Job:</strong> ejecución real.</span>
         <span><strong>Servicios y piezas reales:</strong> lo efectivamente realizado o usado.</span>
-        <span><strong>Service Report:</strong> cierre pendiente de una fase posterior.</span>
+        <span><strong>Reporte de servicio:</strong> cierre oficial del trabajo; PDF pendiente.</span>
       </div>
 
       {success && <div className="admin-alert admin-alert--success" role="status"><span>✓</span><p>{success}</p></div>}
@@ -394,7 +431,26 @@ export default function JobDetailPage() {
             </form>
           )}
 
-          <div className="job-pending-feature"><strong>Reporte de servicio</strong><p>Pendiente de backend. No se simula cierre, PDF ni evidencia.</p><button type="button" className="admin-button admin-button--secondary" disabled>Generar reporte</button></div>
+          <div className="job-pending-feature job-service-report">
+            <strong>Reporte de servicio</strong>
+            {job.status !== 'COMPLETADO' ? (
+              <p>El reporte de servicio se genera después de completar el trabajo.</p>
+            ) : serviceReportLoading ? (
+              <p>Cargando reporte de servicio...</p>
+            ) : serviceReportError ? (
+              <p className="job-service-report__error">{serviceReportError}</p>
+            ) : serviceReport ? (
+              <>
+                <div className="job-service-report__summary">
+                  <span>REP-{serviceReport.id}</span>
+                  <small>{serviceReport.status}</small>
+                </div>
+                <Link className="admin-button admin-button--secondary" to={`/admin/service-reports/${serviceReport.id}`}>Ver reporte</Link>
+              </>
+            ) : (
+              <p>Este trabajo aún no tiene reporte de servicio.</p>
+            )}
+          </div>
         </aside>
       </div>
     </section>

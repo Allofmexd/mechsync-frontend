@@ -77,13 +77,13 @@ export default function JobsListPage() {
       <div className="jobs-summary">
         <article><span>Total de trabajos</span><strong>{pageData.totalElements}</strong><small>Dato reportado por la API</small></article>
         <article><span>Página actual</span><strong>{pageData.totalPages ? pageData.page + 1 : 0}</strong><small>de {pageData.totalPages} páginas</small></article>
-        <article><span>Cierre oficial</span><strong>Pendiente</strong><small>Service Reports se implementará en otra fase</small></article>
+        <article><span>Cierre oficial</span><strong>Disponible</strong><small>Consulta read-only de reportes de servicio</small></article>
       </div>
 
       <div className="jobs-context" role="note">
         <strong>Cotización = autorización</strong>
         <span>Trabajo = ejecución real</span>
-        <span>Reporte de servicio = cierre futuro</span>
+        <span>Reporte de servicio = cierre oficial</span>
       </div>
 
       <div className="jobs-panel">

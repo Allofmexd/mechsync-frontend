@@ -1,0 +1,344 @@
+.service-reports-page,
+.service-report-detail-page {
+  color: #222a36;
+}
+
+.service-reports-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.service-reports-heading--detail {
+  align-items: center;
+}
+
+.service-reports-heading h1 {
+  margin: 0;
+  color: #151c27;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.service-reports-heading p:not(.admin-eyebrow) {
+  margin: 9px 0 0;
+  color: #737b87;
+  font-size: 0.9rem;
+}
+
+.service-reports-readonly {
+  padding: 8px 12px;
+  border: 1px solid #b8c5d6;
+  border-radius: 999px;
+  color: #3f526b;
+  background: #f1f5f9;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.service-reports-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.service-reports-summary article {
+  display: grid;
+  gap: 7px;
+  min-height: 118px;
+  padding: 20px;
+  border: 1px solid #e0e3e7;
+  background: #fff;
+}
+
+.service-reports-summary span,
+.service-reports-summary small {
+  color: #7a828e;
+  font-size: 0.7rem;
+}
+
+.service-reports-summary span {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.service-reports-summary strong {
+  color: #151c27;
+  font-size: 1.6rem;
+}
+
+.service-reports-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 20px;
+  padding: 13px 17px;
+  border-left: 4px solid #ad001f;
+  color: #555f6c;
+  background: #f7f2f3;
+  font-size: 0.76rem;
+}
+
+.service-reports-context strong {
+  color: #8f0019;
+}
+
+.service-reports-panel,
+.service-report-card,
+.service-report-pdf-notice {
+  border: 1px solid #e1c5ca;
+  background: #fff;
+}
+
+.service-reports-panel .admin-alert {
+  margin: 18px;
+}
+
+.service-reports-state {
+  display: grid;
+  min-height: 230px;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 36px;
+  color: #747c88;
+  text-align: center;
+}
+
+.service-reports-state strong {
+  color: #252d39;
+  font-size: 1rem;
+}
+
+.service-reports-state p {
+  margin: 0;
+}
+
+.service-reports-table-wrap {
+  overflow-x: auto;
+}
+
+.service-reports-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.service-reports-table th,
+.service-reports-table td {
+  padding: 15px 13px;
+  border-bottom: 1px solid #eceef1;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.service-reports-table th {
+  color: #666f7b;
+  background: #fafbfc;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.service-reports-table a,
+.service-report-detail-grid a {
+  color: #8f0019;
+  font-weight: 750;
+}
+
+.service-report-status {
+  display: inline-flex;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #475569;
+  background: #e2e8f0;
+  font-size: 0.66rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.service-report-status--completado {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.service-report-status--entregado {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.service-report-status--pendiente {
+  color: #854d0e;
+  background: #fef9c3;
+}
+
+.service-report-status--cancelado {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.service-report-money-stack {
+  display: grid;
+  gap: 4px;
+  min-width: 155px;
+  color: #6a7380;
+  font-size: 0.68rem;
+}
+
+.service-report-money-stack strong {
+  color: #252d39;
+}
+
+.service-reports-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 19px;
+  color: #727a86;
+  font-size: 0.75rem;
+}
+
+.service-reports-pagination div {
+  display: flex;
+  gap: 8px;
+}
+
+.service-reports-pagination button {
+  padding: 8px 12px;
+  border: 1px solid #cbd0d7;
+  border-radius: 3px;
+  color: #343d49;
+  background: #fff;
+  cursor: pointer;
+}
+
+.service-reports-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.service-report-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.8fr);
+  gap: 18px;
+}
+
+.service-report-detail-main,
+.service-report-detail-side {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.service-report-card,
+.service-report-pdf-notice {
+  padding: 23px;
+}
+
+.service-report-card h2 {
+  margin: 0 0 18px;
+  color: #202834;
+  font-size: 1rem;
+}
+
+.service-report-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 24px;
+  margin: 0;
+}
+
+.service-report-detail-grid div {
+  display: grid;
+  gap: 6px;
+}
+
+.service-report-detail-grid dt,
+.service-report-money-grid span {
+  color: #747d89;
+  font-size: 0.66rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.service-report-detail-grid dd {
+  margin: 0;
+  color: #252d39;
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.service-report-description {
+  margin: 0;
+  color: #4f5966;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.service-report-money-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.service-report-money-grid div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 13px;
+  background: #f7f8fa;
+}
+
+.service-report-money-grid strong {
+  color: #252d39;
+  font-size: 1rem;
+}
+
+.service-report-money-grid .service-report-money-total {
+  color: #fff;
+  background: #8f0019;
+}
+
+.service-report-money-grid .service-report-money-total span,
+.service-report-money-grid .service-report-money-total strong {
+  color: #fff;
+}
+
+.service-report-pdf-notice {
+  border-color: #c8d5ec;
+  color: #334e78;
+  background: #eef5ff;
+}
+
+.service-report-pdf-notice p {
+  margin: 7px 0 0;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .service-reports-summary,
+  .service-report-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .service-reports-heading,
+  .service-reports-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .service-report-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

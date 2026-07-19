@@ -10,6 +10,8 @@ import JobDetailPage from '../features/jobs/JobDetailPage.jsx';
 import JobsListPage from '../features/jobs/JobsListPage.jsx';
 import LandingPage from '../features/landing/LandingPage.jsx';
 import QuotationCreatePage from '../features/quotations/QuotationCreatePage.jsx';
+import ServiceReportDetailPage from '../features/serviceReports/ServiceReportDetailPage.jsx';
+import ServiceReportsListPage from '../features/serviceReports/ServiceReportsListPage.jsx';
 import TechnicianAssignedWorkOrdersPage from '../features/technician/TechnicianAssignedWorkOrdersPage.jsx';
 import TechnicianDashboardPage from '../features/technician/TechnicianDashboardPage.jsx';
 import TechnicianWorkOrderDetailPage from '../features/technician/TechnicianWorkOrderDetailPage.jsx';
@@ -64,6 +66,8 @@ function AppRouter() {
           <Route path="/admin/jobs" element={<JobsListPage />} />
           <Route path="/admin/jobs/new" element={<JobCreatePage />} />
           <Route path="/admin/jobs/:id" element={<JobDetailPage />} />
+          <Route path="/admin/service-reports" element={<ServiceReportsListPage />} />
+          <Route path="/admin/service-reports/:id" element={<ServiceReportDetailPage />} />
         </Route>
       </Route>
       <Route element={<ProtectedRoute allowedRoles={['TECNICO']} />}>

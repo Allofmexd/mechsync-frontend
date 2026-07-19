@@ -490,6 +490,34 @@
   margin: 6px 0 12px;
 }
 
+.job-service-report__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 10px 0 12px;
+  padding: 10px;
+  color: #334e78;
+  background: #eef5ff;
+}
+
+.job-service-report__summary span {
+  font-weight: 850;
+}
+
+.job-service-report__summary small {
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.job-service-report .admin-button {
+  width: 100%;
+}
+
+.job-service-report__error {
+  color: #991b1b;
+}
+
 .job-action-form {
   display: grid;
   gap: 12px;

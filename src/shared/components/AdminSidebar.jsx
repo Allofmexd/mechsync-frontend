@@ -50,6 +50,14 @@ function PendingIcon() {
   );
 }
 
+function ReportsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 3h9l3 3v15H6zM14 3v4h4M9 11h6M9 15h6M9 19h4" />
+    </svg>
+  );
+}
+
 function LogoutIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -112,6 +120,10 @@ export default function AdminSidebar() {
         <NavLink to="/admin/jobs">
           <PendingIcon />
           <span>Trabajos realizados</span>
+        </NavLink>
+        <NavLink to="/admin/service-reports">
+          <ReportsIcon />
+          <span>Reportes de servicio</span>
         </NavLink>
 
         <span className="admin-sidebar__group">Cotizaciones</span>
