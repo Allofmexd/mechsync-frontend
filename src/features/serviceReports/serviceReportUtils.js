@@ -59,3 +59,11 @@ export function getServiceReportCreateErrorMessage(error) {
   if (error?.status >= 500) return 'Error inesperado del servidor. Intenta nuevamente.';
   return 'No fue posible crear el reporte de servicio.';
 }
+
+export function getServiceReportPdfErrorMessage(error) {
+  if (error?.status === 401) return 'Tu sesión expiró. Inicia sesión nuevamente.';
+  if (error?.status === 403) return 'No tienes permiso para descargar este PDF.';
+  if (error?.status === 404) return 'El PDF del reporte no fue encontrado.';
+  if (error?.status >= 500) return 'No fue posible generar el PDF del reporte.';
+  return 'No fue posible descargar el PDF. Intenta nuevamente.';
+}

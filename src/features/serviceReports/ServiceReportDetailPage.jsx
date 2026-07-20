@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getServiceReportById } from './serviceReportsService';
+import { downloadServiceReportPdf, getServiceReportById } from './serviceReportsService';
 import {
   formatServiceReportDate,
   formatServiceReportMoney,
   getServiceReportErrorMessage,
+  getServiceReportPdfErrorMessage,
   SERVICE_REPORT_STATUS_LABELS,
   serviceReportStatusClass,
   unwrapServiceReportData,
@@ -16,6 +17,8 @@ export default function ServiceReportDetailPage() {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [pdfDownloading, setPdfDownloading] = useState(false);
+  const [pdfError, setPdfError] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -41,6 +44,29 @@ export default function ServiceReportDetailPage() {
   if (error) return <section className="service-report-detail-page"><div className="admin-alert admin-alert--error" role="alert"><span>!</span><p>{error}</p></div><Link className="admin-button admin-button--secondary" to="/admin/service-reports">Volver a reportes</Link></section>;
   if (!report) return null;
 
+  async function handlePdfDownload() {
+    setPdfDownloading(true);
+    setPdfError('');
+    let objectUrl;
+
+    try {
+      const { blob, filename } = await downloadServiceReportPdf(report.id);
+      objectUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = objectUrl;
+      anchor.download = filename;
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+    } catch (downloadError) {
+      setPdfError(getServiceReportPdfErrorMessage(downloadError));
+    } finally {
+      if (objectUrl) window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+      setPdfDownloading(false);
+    }
+  }
+
   return (
     <section className="service-report-detail-page">
       <div className="admin-breadcrumb"><Link to="/admin/service-reports">Reportes de servicio</Link><span>›</span><strong>REP-{report.id}</strong></div>
@@ -50,8 +76,20 @@ export default function ServiceReportDetailPage() {
           <h1>Reporte REP-{report.id}</h1>
           <p>Información definitiva registrada para el trabajo JOB-{report.jobId}.</p>
         </div>
-        <span className={serviceReportStatusClass(report.status)}>{SERVICE_REPORT_STATUS_LABELS[report.status] || report.status}</span>
+        <div className="service-report-detail-actions">
+          <span className={serviceReportStatusClass(report.status)}>{SERVICE_REPORT_STATUS_LABELS[report.status] || report.status}</span>
+          <button
+            className="admin-button admin-button--primary"
+            type="button"
+            disabled={pdfDownloading}
+            onClick={handlePdfDownload}
+          >
+            {pdfDownloading ? 'Descargando PDF...' : 'Descargar PDF'}
+          </button>
+        </div>
       </div>
+
+      {pdfError ? <div className="admin-alert admin-alert--error service-report-pdf-error" role="alert"><span>!</span><p>{pdfError}</p></div> : null}
 
       <div className="service-report-detail-layout">
         <div className="service-report-detail-main">
@@ -92,8 +130,8 @@ export default function ServiceReportDetailPage() {
           </section>
 
           <div className="service-report-pdf-notice" role="note">
-            <strong>Documento final pendiente</strong>
-            <p>El PDF del reporte final se implementará en una fase posterior.</p>
+            <strong>Documento final disponible</strong>
+            <p>El PDF se genera desde los datos oficiales del reporte y se descarga sin almacenarse en el navegador.</p>
           </div>
         </aside>
       </div>

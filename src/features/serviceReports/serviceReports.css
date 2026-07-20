@@ -15,6 +15,22 @@
   align-items: center;
 }
 
+.service-report-detail-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.service-report-detail-actions .admin-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.service-report-pdf-error {
+  margin-bottom: 18px;
+}
+
 .service-reports-heading h1 {
   margin: 0;
   color: #151c27;
@@ -545,6 +561,11 @@
 @media (max-width: 680px) {
   .service-reports-heading,
   .service-reports-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .service-report-detail-actions {
     align-items: stretch;
     flex-direction: column;
   }
