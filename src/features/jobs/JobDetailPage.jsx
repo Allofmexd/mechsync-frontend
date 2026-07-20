@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getTechnicians } from '../technicians/techniciansService';
+import ServiceReportCreateModal from '../serviceReports/ServiceReportCreateModal';
 import { getServiceReportByJobId } from '../serviceReports/serviceReportsService';
 import { unwrapServiceReportData } from '../serviceReports/serviceReportUtils';
 import JobLineSection from './JobLineSection';
@@ -78,6 +79,7 @@ export default function JobDetailPage() {
   const [serviceReport, setServiceReport] = useState(null);
   const [serviceReportLoading, setServiceReportLoading] = useState(false);
   const [serviceReportError, setServiceReportError] = useState('');
+  const [createReportOpen, setCreateReportOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -222,6 +224,26 @@ export default function JobDetailPage() {
     await deleteJobPart(id, lineId);
     await refreshOperationalData();
     setSuccess('Pieza eliminada correctamente.');
+  }
+
+  function openServiceReportForm() {
+    prepareAction();
+    if (job?.status !== 'COMPLETADO') {
+      setActionError('Solo se puede crear reporte para trabajos completados.');
+      return;
+    }
+    if (serviceReport) {
+      setActionError('Este trabajo ya tiene reporte de servicio.');
+      return;
+    }
+    setCreateReportOpen(true);
+  }
+
+  function handleServiceReportCreated(report) {
+    setServiceReport(report);
+    setServiceReportError('');
+    setCreateReportOpen(false);
+    setSuccess('Reporte de servicio creado correctamente.');
   }
 
   async function handleStart() {
@@ -448,11 +470,24 @@ export default function JobDetailPage() {
                 <Link className="admin-button admin-button--secondary" to={`/admin/service-reports/${serviceReport.id}`}>Ver reporte</Link>
               </>
             ) : (
-              <p>Este trabajo aún no tiene reporte de servicio.</p>
+              <>
+                <p>Este trabajo aún no tiene reporte de servicio.</p>
+                <button className="admin-button admin-button--primary" type="button" onClick={openServiceReportForm}>Crear reporte de servicio</button>
+              </>
             )}
           </div>
         </aside>
       </div>
+
+      {createReportOpen && (
+        <ServiceReportCreateModal
+          job={job}
+          serviceLines={serviceLines}
+          partLines={partLines}
+          onClose={() => setCreateReportOpen(false)}
+          onCreated={handleServiceReportCreated}
+        />
+      )}
     </section>
   );
 }
