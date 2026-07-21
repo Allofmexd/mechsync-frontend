@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getApiErrorMessage } from '../../shared/api/apiErrorMessages';
+import { validatePhoneField } from '../../shared/validation/phoneValidation';
 import { createUser, getUserById, getUsers } from '../users/usersService';
 import { createCustomer, getCustomers } from './customersService';
 import './customers.css';
@@ -87,6 +88,7 @@ export default function CustomerCreatePage() {
   const [userQuery, setUserQuery] = useState('');
   const [selectedUserId, setSelectedUserId] = useState('');
   const [eligibilityReloadKey, setEligibilityReloadKey] = useState(0);
+  const [phoneError, setPhoneError] = useState('');
 
   useEffect(() => {
     if (mode !== CREATE_MODES.EXISTING) return undefined;
@@ -155,10 +157,20 @@ export default function CustomerCreatePage() {
     setStage('');
     setSelectedUserId('');
     setUserQuery('');
+    setPhoneError('');
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (mode === CREATE_MODES.NEW) {
+      const phoneInput = event.currentTarget.elements.namedItem('phone');
+      const phoneValidationError = validatePhoneField(phoneInput);
+      setPhoneError(phoneValidationError);
+      if (phoneValidationError) {
+        phoneInput?.reportValidity();
+        return;
+      }
+    }
     setSubmitting(true);
     setError('');
     setPartialCreation(false);
@@ -323,7 +335,17 @@ export default function CustomerCreatePage() {
                   </label>
                   <label>
                     <span>Teléfono <small>(opcional)</small></span>
-                    <input name="phone" type="tel" maxLength="20" autoComplete="tel" placeholder="Ej. 961 000 0000" />
+                    <input
+                      name="phone"
+                      type="tel"
+                      maxLength="30"
+                      autoComplete="tel"
+                      aria-invalid={Boolean(phoneError)}
+                      aria-describedby={phoneError ? 'customer-create-phone-error' : undefined}
+                      onInput={(event) => setPhoneError(validatePhoneField(event.currentTarget))}
+                      placeholder="Ej. 961 000 0000"
+                    />
+                    {phoneError && <small id="customer-create-phone-error" className="phone-validation-error" role="alert">{phoneError}</small>}
                   </label>
                   <label>
                     <span>Correo electrónico *</span>

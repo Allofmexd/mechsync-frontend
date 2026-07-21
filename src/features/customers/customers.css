@@ -397,6 +397,11 @@
   font-weight: 500;
 }
 
+.customer-form label > .phone-validation-error {
+  color: #b42318;
+  font-weight: 650;
+}
+
 .customer-form__full {
   grid-column: 1 / -1;
 }

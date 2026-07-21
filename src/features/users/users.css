@@ -10,6 +10,7 @@
 .users-panel, .user-form { border: 1px solid #e1c5ca; background: #fff; }
 .users-toolbar { padding: 18px; border-bottom: 1px solid #e1c5ca; background: #f1f3ff; }
 .users-toolbar label, .user-field { display: grid; gap: 7px; color: #4d5663; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+.phone-validation-error { color: #b42318; font-size: 0.69rem; font-weight: 650; text-transform: none; }
 .users-toolbar input, .user-field input, .user-field select { width: 100%; min-height: 43px; padding: 0 11px; border: 1px solid #cdb5ba; border-radius: 3px; background: #fff; font: inherit; font-size: 0.8rem; text-transform: none; }
 .users-alert { margin: 18px; }
 .users-state { display: grid; min-height: 150px; place-items: center; padding: 28px; color: #737c88; text-align: center; }
