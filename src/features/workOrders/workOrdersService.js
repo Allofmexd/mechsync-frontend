@@ -13,6 +13,18 @@ export function getWorkOrders({ page = 0, size = 20 } = {}) {
   });
 }
 
+export function getAssignedWorkOrders({ page = 0, size = 20 } = {}) {
+  const searchParams = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+  });
+
+  return apiFetch(`/work-orders/assigned-to-me?${searchParams.toString()}`, {
+    method: 'GET',
+    token: getRequiredAuthToken(),
+  });
+}
+
 export function getWorkOrderById(workOrderId) {
   return apiFetch(`/work-orders/${workOrderId}`, {
     method: 'GET',

@@ -7,3 +7,10 @@ export function getTechnicians() {
     token: getRequiredAuthToken(),
   });
 }
+
+export function getCurrentTechnician() {
+  return apiFetch('/technicians/me', {
+    method: 'GET',
+    token: getRequiredAuthToken(),
+  });
+}

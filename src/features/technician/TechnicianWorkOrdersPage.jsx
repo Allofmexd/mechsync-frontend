@@ -38,7 +38,7 @@ export default function TechnicianWorkOrdersPage() {
   return (
     <section className="technician-orders-page">
       <div className="technician-page-heading"><div><p className="admin-eyebrow">Panel técnico</p><h1>Mis órdenes</h1><p>Work Orders asociadas de forma segura al registro del técnico autenticado.</p></div></div>
-      <div className="technician-client-filter-notice"><strong>Filtrado temporal en frontend</strong><p>La API devuelve el listado permitido al rol TECNICO; esta vista lo reduce por `technicianId`. Se recomienda `/work-orders/assigned-to-me`.</p></div>
+      <div className="technician-client-filter-notice"><strong>Asignación protegida por la API</strong><p>La vista consume únicamente las órdenes asignadas al técnico autenticado.</p></div>
 
       <section className="technician-panel">
         <div className="technician-filters technician-filters--compact">

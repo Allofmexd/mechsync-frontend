@@ -1,6 +1,6 @@
 import { getWorkOrderStatuses } from '../catalogs/catalogsService';
-import { getTechnicians } from '../technicians/techniciansService';
-import { getWorkOrders } from '../workOrders/workOrdersService';
+import { getCurrentTechnician } from '../technicians/techniciansService';
+import { getAssignedWorkOrders } from '../workOrders/workOrdersService';
 
 const MAX_PAGE_SIZE = 100;
 
@@ -13,8 +13,8 @@ function unwrapCollection(response) {
   return Array.isArray(data) ? data : data?.content ?? [];
 }
 
-async function getAllWorkOrders() {
-  const firstPage = unwrap(await getWorkOrders({ page: 0, size: MAX_PAGE_SIZE }));
+async function getAllAssignedWorkOrders() {
+  const firstPage = unwrap(await getAssignedWorkOrders({ page: 0, size: MAX_PAGE_SIZE }));
   if (Array.isArray(firstPage)) return firstPage;
 
   const firstContent = Array.isArray(firstPage?.content) ? firstPage.content : [];
@@ -23,7 +23,7 @@ async function getAllWorkOrders() {
 
   const remainingPages = await Promise.all(
     Array.from({ length: totalPages - 1 }, (_, index) =>
-      getWorkOrders({ page: index + 1, size: MAX_PAGE_SIZE }),
+      getAssignedWorkOrders({ page: index + 1, size: MAX_PAGE_SIZE }),
     ),
   );
 
@@ -33,28 +33,16 @@ async function getAllWorkOrders() {
   ];
 }
 
-export async function getTechnicianWorkspace(userId) {
-  if (userId === null || userId === undefined || userId === '') {
-    throw new Error('No fue posible identificar al usuario autenticado.');
-  }
-
-  const technicians = unwrapCollection(await getTechnicians());
-  const technician = technicians.find((item) => String(item.userId) === String(userId)) ?? null;
-
-  if (!technician) {
-    return { technician: null, workOrders: [], statuses: [] };
-  }
-
+export async function getTechnicianWorkspace() {
+  const technician = unwrap(await getCurrentTechnician());
   const [workOrders, statusesResponse] = await Promise.all([
-    getAllWorkOrders(),
+    getAllAssignedWorkOrders(),
     getWorkOrderStatuses(),
   ]);
 
   return {
     technician,
-    workOrders: workOrders.filter(
-      (workOrder) => String(workOrder.technicianId) === String(technician.id),
-    ),
+    workOrders,
     statuses: unwrapCollection(statusesResponse),
   };
 }

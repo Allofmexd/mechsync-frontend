@@ -50,7 +50,7 @@ export default function TechnicianDashboardPage() {
       </div>
 
       <div className="technician-metrics">
-        <article><span>Órdenes asignadas</span><strong>{workspace.workOrders.length}</strong><small>Coincidencia por technicianId</small></article>
+        <article><span>Órdenes asignadas</span><strong>{workspace.workOrders.length}</strong><small>Filtradas de forma segura por la API</small></article>
         <article><span>En proceso</span><strong>{statusCounts.EN_PROCESO || 0}</strong><small>Catálogo WORK_ORDERS</small></article>
         <article><span>Aprobadas</span><strong>{statusCounts.APROBADO || 0}</strong><small>Planificaciones aprobadas</small></article>
         <article><span>Pendientes</span><strong>{statusCounts.PENDIENTE || 0}</strong><small>Órdenes por atender</small></article>

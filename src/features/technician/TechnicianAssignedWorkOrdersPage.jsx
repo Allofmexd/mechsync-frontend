@@ -38,7 +38,7 @@ export default function TechnicianAssignedWorkOrdersPage() {
 
   return (
     <section className="technician-orders-page technician-assigned-page">
-      <div className="technician-page-heading"><div><p className="admin-eyebrow">Panel técnico › Mis órdenes</p><h1>Mis órdenes asignadas</h1><p>Solo se muestran registros cuyo `technicianId` coincide con tu perfil técnico.</p></div></div>
+      <div className="technician-page-heading"><div><p className="admin-eyebrow">Panel técnico › Mis órdenes</p><h1>Mis órdenes asignadas</h1><p>La API entrega únicamente las órdenes asignadas a tu perfil técnico.</p></div></div>
       <section className="technician-panel">
         <div className="technician-filters">
           <label>Estado<select value={filters.statusId} onChange={(event) => setFilters((current) => ({ ...current, statusId: event.target.value }))}><option value="">Todos los estados</option>{workspace.statuses.map((status) => <option key={status.id} value={status.id}>{status.name}</option>)}</select></label>
@@ -46,7 +46,7 @@ export default function TechnicianAssignedWorkOrdersPage() {
           <label>Buscar por placa o folio<input type="search" value={filters.query} onChange={(event) => setFilters((current) => ({ ...current, query: event.target.value }))} placeholder="Ej. ABC-1234 u OT-10" /></label>
           <button className="admin-button admin-button--secondary" type="button" onClick={() => setFilters({ query: '', statusId: '', date: '' })}>Limpiar</button>
         </div>
-        <div className="technician-client-filter-notice technician-client-filter-notice--inside"><strong>Asignación verificada en cliente</strong><p>Mapeo `/auth/me.id` → `/technicians.userId` → `workOrder.technicianId`.</p></div>
+        <div className="technician-client-filter-notice technician-client-filter-notice--inside"><strong>Asignación verificada en servidor</strong><p>La API resuelve el perfil autenticado y filtra por `workOrder.technicianId`.</p></div>
         {relations.warning && <div className="technician-inline-warning">{relations.warning}</div>}
         {relations.loading ? <div className="technician-empty">Cargando órdenes asignadas...</div> : filteredOrders.length === 0 ? <div className="technician-empty"><strong>No tienes órdenes asignadas.</strong><p>No existen coincidencias para los filtros actuales.</p></div> : <TechnicianOrdersTable workOrders={visibleOrders} statuses={workspace.statuses} {...relations} showPendingActions />}
         {totalPages > 1 && <div className="technician-pagination"><span>Mostrando {visibleOrders.length} de {filteredOrders.length} órdenes</span><div><button type="button" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Anterior</button><span>{page + 1} / {totalPages}</span><button type="button" disabled={page + 1 >= totalPages} onClick={() => setPage((value) => value + 1)}>Siguiente</button></div></div>}
