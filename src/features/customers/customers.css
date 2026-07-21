@@ -279,6 +279,55 @@
   border: 0;
 }
 
+.customer-form .customer-mode-selector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-bottom: 0;
+}
+
+.customer-mode-selector legend {
+  margin-bottom: 10px;
+  color: #343c48;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.customer-mode-selector label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #d9dde3;
+  border-radius: 7px;
+  background: #fafbfc;
+  cursor: pointer;
+}
+
+.customer-mode-selector label:has(input:checked) {
+  border-color: var(--color-red-dark);
+  box-shadow: 0 0 0 2px rgb(172 0 30 / 8%);
+  background: #fff8f9;
+}
+
+.customer-mode-selector input {
+  width: 17px;
+  min-height: 17px;
+  margin: 2px 0 0;
+  accent-color: var(--color-red-dark);
+}
+
+.customer-mode-selector label > span {
+  display: grid;
+  gap: 4px;
+}
+
+.customer-mode-selector small {
+  color: #737b87;
+  font-size: 0.69rem;
+  font-weight: 500;
+}
+
 .customer-form__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -300,6 +349,7 @@
 }
 
 .customer-form input,
+.customer-form select,
 .customer-form textarea {
   width: 100%;
   border: 1px solid #cfd4da;
@@ -318,6 +368,11 @@
   padding: 0 13px;
 }
 
+.customer-form select {
+  min-height: 44px;
+  padding: 0 38px 0 13px;
+}
+
 .customer-form textarea {
   min-height: 90px;
   padding: 12px 13px;
@@ -325,6 +380,7 @@
 }
 
 .customer-form input:focus,
+.customer-form select:focus,
 .customer-form textarea:focus {
   border-color: var(--color-red-dark);
   box-shadow: 0 0 0 3px rgb(172 0 30 / 10%);
@@ -352,6 +408,38 @@
   background: #fffbeb;
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.customer-form__state {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 5px;
+  color: #59616d;
+  background: #f4f6f8;
+  font-size: 0.76rem;
+}
+
+.customer-form__inline-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 5px;
+  color: #991b1b;
+  background: #fff1f2;
+  font-size: 0.76rem;
+  font-weight: 650;
+}
+
+.customer-form__inline-error button {
+  border: 0;
+  color: #991b1b;
+  background: transparent;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .customer-form__actions {
@@ -680,6 +768,7 @@
   }
 
   .customer-form__grid,
+  .customer-form .customer-mode-selector,
   .customer-create-help {
     grid-template-columns: 1fr;
   }
