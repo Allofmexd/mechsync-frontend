@@ -1,5 +1,5 @@
 import { API_BASE_URL, apiFetch } from '../../shared/api/apiClient';
-import { getRequiredAuthToken } from '../../shared/storage/authStorage';
+import { clearAuthToken, getRequiredAuthToken } from '../../shared/storage/authStorage';
 
 function authenticatedRequest(path, options = {}) {
   return apiFetch(path, {
@@ -102,6 +102,12 @@ export async function downloadServiceReportPdf(reportId) {
   }
 
   if (!response.ok) {
+    if (response.status === 401) {
+      clearAuthToken();
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        window.location.replace('/login?reason=session-expired');
+      }
+    }
     throw createDownloadError(response.status, await readErrorResponse(response));
   }
 

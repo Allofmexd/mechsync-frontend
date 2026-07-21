@@ -48,6 +48,11 @@
   color: #7b8494;
 }
 
+.access-information { display: grid; gap: 1rem; padding: 1.25rem; border: 1px solid rgba(148, 163, 184, .35); border-radius: 14px; background: rgba(248, 250, 252, .9); }
+.access-information h2, .access-information p { margin: 0; }
+.access-information h2 { color: #172033; font-size: 1.15rem; }
+.access-information p { color: #5f6877; line-height: 1.6; }
+
 .auth-form input:focus,
 .tracking-form input:focus {
   border-color: var(--color-red);

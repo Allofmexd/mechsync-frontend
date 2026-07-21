@@ -20,6 +20,14 @@ import {
 import './workOrderRevisions.css';
 
 const REVISION_PAGE_SIZE = 20;
+const ACCEPTANCE_METHODS = [
+  ['IN_PERSON', 'Presencial'],
+  ['WHATSAPP', 'WhatsApp'],
+  ['PHONE', 'Teléfono'],
+  ['EMAIL', 'Correo electrónico'],
+  ['SIGNED_DOCUMENT', 'Documento firmado'],
+  ['OTHER', 'Otro'],
+];
 
 function optionalRevision(result) {
   if (result.status === 'fulfilled') return unwrapApiData(result.value);
@@ -94,7 +102,11 @@ export default function WorkOrderRevisionsPanel({ workOrderId, standalone = fals
     const acceptanceNotes = String(formData.get('acceptanceNotes') || '').trim();
     const acceptedAt = String(formData.get('acceptedAt') || '').trim();
     if (!acceptedByName || !acceptanceMethod) {
-      setError('Nombre del aceptante y código de método son obligatorios.');
+      setError('Nombre del aceptante y método de aceptación son obligatorios.');
+      return;
+    }
+    if (acceptanceMethod === 'OTHER' && !acceptanceNotes) {
+      setError('Las notas son obligatorias cuando el método de aceptación es Otro.');
       return;
     }
     if (!window.confirm('¿Confirmas la aprobación final de esta cotización?')) return;
@@ -107,7 +119,7 @@ export default function WorkOrderRevisionsPanel({ workOrderId, standalone = fals
     try {
       await approveWorkOrderRevision(workOrderId, approvalRevision.id, payload);
       setApprovalRevision(null);
-      setSuccess('Cotización aprobada realmente por la API.');
+      setSuccess('Cotización aprobada y aceptación registrada correctamente.');
       await loadRevisions();
     } catch (requestError) {
       setError(getRevisionErrorMessage(requestError, 'No fue posible aprobar la cotización.'));
@@ -149,8 +161,8 @@ export default function WorkOrderRevisionsPanel({ workOrderId, standalone = fals
       )}
 
       {approvalRevision && <form className="revision-approval" onSubmit={handleApprove}>
-        <header><div><h3>Aprobar revisión R{approvalRevision.revisionNumber}</h3><p>Registra la evidencia de aceptación. No se crea un Job en esta fase.</p></div><button type="button" onClick={() => setApprovalRevision(null)} aria-label="Cerrar">×</button></header>
-        <div className="revision-fields"><label className="revision-field"><span>Nombre del aceptante *</span><input name="acceptedByName" maxLength="200" required disabled={Boolean(workingAction)} /></label><label className="revision-field"><span>Código de método *</span><input name="acceptanceMethod" maxLength="30" placeholder="Código activo del catálogo backend" required disabled={Boolean(workingAction)} /></label><label className="revision-field"><span>Fecha de aceptación</span><input name="acceptedAt" type="datetime-local" disabled={Boolean(workingAction)} /></label><label className="revision-field revision-field--wide"><span>Notas</span><textarea name="acceptanceNotes" disabled={Boolean(workingAction)} /></label></div>
+        <header><div><h3>Aprobación final y aceptación · R{approvalRevision.revisionNumber}</h3><p>Esta operación registra la aprobación interna y la evidencia de aceptación exigida por el contrato actual.</p></div><button type="button" onClick={() => setApprovalRevision(null)} aria-label="Cerrar">×</button></header>
+        <div className="revision-fields"><label className="revision-field"><span>Nombre del aceptante *</span><input name="acceptedByName" maxLength="200" required disabled={Boolean(workingAction)} /></label><label className="revision-field"><span>Método de aceptación *</span><select name="acceptanceMethod" required disabled={Boolean(workingAction)}><option value="">Selecciona un método</option>{ACCEPTANCE_METHODS.map(([code, label]) => <option key={code} value={code}>{label}</option>)}</select></label><label className="revision-field"><span>Fecha de aceptación</span><input name="acceptedAt" type="datetime-local" disabled={Boolean(workingAction)} /></label><label className="revision-field revision-field--wide"><span>Notas</span><textarea name="acceptanceNotes" disabled={Boolean(workingAction)} /></label></div>
         <footer><button className="admin-button admin-button--primary" type="submit" disabled={Boolean(workingAction)}>{workingAction ? 'Aprobando...' : 'Confirmar aprobación'}</button><button className="admin-button admin-button--secondary" type="button" onClick={() => setApprovalRevision(null)} disabled={Boolean(workingAction)}>Cancelar</button></footer>
       </form>}
     </section>

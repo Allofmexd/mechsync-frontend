@@ -1,210 +1,92 @@
 # MechSync Frontend
 
-Frontend de MechSync, la aplicación web para la gestión de talleres especializados en transmisiones automáticas.
+Aplicación React/Vite para la operación administrativa y técnica de MechSync.
 
-## Stack
+## Stack y comandos
 
-- React 19
-- Vite 6
-- React Router
-- JavaScript
-- HTML y CSS
-- Fetch API para comunicación HTTP
-
-## Requisitos
-
-- Node.js 20 o superior
-- npm 10 o superior
-- Backend de MechSync disponible de forma local o remota
-
-## Instalación
+- React 19, Vite 6 y React Router.
+- Fetch API con JWT Bearer.
+- Node.js 20+ y npm 10+.
 
 ```bash
 npm install
-```
-
-## Comandos
-
-```bash
-# Servidor de desarrollo
 npm run dev
-
-# Build de producción
 npm run build
-
-# Vista previa del build
 npm run preview
 ```
 
-Vite sirve el entorno de desarrollo normalmente en `http://localhost:5173` y la vista previa en `http://localhost:4173`.
+El proyecto no tiene scripts `lint` ni `test` configurados actualmente.
 
-## Rutas públicas disponibles
+## Configuración
 
-- `/`: landing pública de MechSync.
-- `/login`: inicio de sesión conectado a `POST /auth/login`.
-- `/register`: formulario visual de registro.
-
-El backend todavía no ofrece un endpoint público de registro. La ruta `/register` no realiza
-peticiones y muestra una indicación para solicitar la cuenta a un administrador. No debe
-conectarse a `POST /users`, porque ese endpoint es administrativo y requiere autorización.
-
-## Rutas administrativas disponibles
-
-- `/admin/customers`: listado paginado conectado a `GET /customers`.
-- `/admin/customers/new`: alta administrativa mediante `POST /users` y después `POST /customers`.
-- `/admin/customers/:id`: ficha de Customer enriquecida con su User asociado.
-- `/admin/vehicles`: listado paginado conectado a `GET /vehicles`.
-- `/admin/vehicles/new`: alta mediante `POST /vehicles` para un Customer existente.
-- `/admin/vehicles/:id`: detalle conectado a `GET /vehicles/{id}`.
-- `/admin/vehicle-intakes`: gestión paginada conectada a `GET /vehicle-intakes`.
-- `/admin/vehicle-intakes/new`: alta conectada a vehículos, estados, técnicos y `POST /vehicle-intakes`.
-- `/admin/vehicle-intakes/:id`: detalle conectado a `GET /vehicle-intakes/{id}`.
-- `/admin/work-orders`: listado de órdenes de servicio conectado a `GET /work-orders`.
-- `/admin/work-orders/new`: creación conectada a `POST /work-orders`.
-- `/admin/work-orders/:id`: detalle de Work Order e historial real de cotizaciones.
-- `/admin/work-orders/:workOrderId/revisions`: revisión vigente, aprobación final e historial.
-- `/admin/work-orders/:workOrderId/revisions/:revisionId`: detalle de snapshot versionado.
-- `/admin/quotations/new`: creación real de Work Order Revision.
-- `/admin/jobs`: placeholder de trabajos realizados, pendiente de API.
-
-Todas las rutas administrativas requieren una sesión con JWT y rol `ADMINISTRADOR`. Si no existe token local, la navegación redirige a
-`/login`. Los endpoints de Users y Customers requieren un usuario con ese rol; la
-autorización definitiva siempre la aplica Spring Security en el backend.
-
-La contraseña temporal del formulario de alta se envía únicamente durante `POST /users`: no se
-guarda en `localStorage`, no se registra en consola y no forma parte de la tabla de clientes.
-
-El alta de Vehicle Intake obtiene `statusId` desde
-`GET /catalogs/statuses?context=VEHICLE_INTAKES` y nunca hardcodea identificadores. El selector de
-técnicos consume `GET /technicians`; si la respuesta está vacía, el ingreso puede registrarse sin
-asignación y `technicianId` se omite del request.
-
-`/admin/vehicle-intakes/new` representa exclusivamente el formulario de **Nuevo ingreso** y
-`/admin/vehicle-intakes` es la gestión/listado independiente. El listado usa los catálogos reales
-para mostrar nombres de estado y enriquece vehículos y técnicos únicamente mediante endpoints
-existentes.
-
-La creación de Work Orders obtiene `vehicleIntakeId`, `technicianId` y `statusId` de respuestas
-reales. El contrato actual exige que exista un técnico y que subtotal, IVA y total se capturen de
-forma explícita; el frontend no hardcodea identificadores ni inventa reglas financieras.
-
-## Cotizaciones versionadas
-
-El frontend consume Work Order Revisions exclusivamente bajo `/api/v1`. No existe `/api/v2`:
-“Work Orders v2” identifica el modelo interno de snapshots, no una versión pública de la API.
-
-La vista `/admin/quotations/new` selecciona una Work Order y un técnico reales, permite capturar
-líneas snapshot personalizadas sin `serviceId`/`partId`, calcula subtotal, IVA y total como ayuda
-visual y envía los importes para que el backend los vuelva a calcular y validar. Los catálogos
-productivos de servicios y piezas siguen pendientes; por ello no se inventan IDs y las listas pueden
-quedar vacías conforme al contrato backend.
-
-El detalle e historial permiten enviar, aprobar, rechazar y cancelar según el estado de la revisión.
-La aprobación solicita nombre del aceptante y código de método; no hardcodea IDs ni simula éxito.
-Los endpoints `current` y `final-approved` distinguen la revisión vigente de la aprobación final.
-
-Esta integración requiere que el entorno backend tenga aplicadas las migraciones de database/v2
-`001`–`005` y sus seeds. Mientras AWS u otro entorno no las tenga, los errores `5xx` de estos
-endpoints se muestran como infraestructura pendiente y el formulario no informa éxito.
-
-## Rutas del técnico
-
-- `/technician`: panel con métricas derivadas de las Work Orders asignadas.
-- `/technician/dashboard`: alias que redirige al panel técnico.
-- `/technician/work-orders`: listado compacto de órdenes propias.
-- `/technician/assigned-work-orders`: listado asignado con filtros por estado, fecha, placa o folio.
-- `/technician/work-orders/:id`: detalle seguro de una orden asignada.
-
-Estas rutas requieren JWT y rol `TECNICO`. El login utiliza los roles devueltos por `POST /auth/login`
-para dirigir al usuario a su sección y `ProtectedRoute` confirma la identidad con `GET /auth/me`.
-
-La asociación temporal se resuelve así:
-
-1. `GET /auth/me` proporciona el `id` del usuario autenticado.
-2. `GET /technicians` permite localizar el registro cuyo `userId` coincide.
-3. `GET /work-orders` se pagina completamente y se filtra en cliente por `technicianId`.
-
-Este filtrado evita presentar órdenes ajenas como propias, pero no sustituye autorización ni
-filtrado backend. Es temporal hasta que exista `GET /work-orders/assigned-to-me`; el endpoint actual
-todavía transmite al navegador del técnico el listado general autorizado por Spring Security.
-Work Orders son planificación/cotización y no equivalen a Jobs o trabajo ejecutado.
-
-## Endpoints pendientes
-
-Estas rutas son contratos candidatos documentados como brecha. No se consumen desde el frontend
-hasta que exista una implementación productiva en el backend.
-
-### Trabajos realizados
-
-- `GET /jobs`
-- `GET /jobs/{id}`
-- `POST /jobs`
-- `PUT /jobs/{id}`
-- `PATCH /jobs/{id}/status`
-
-### Reportes de servicio
-
-- `GET /service-reports`
-- `GET /service-reports/{id}`
-- `POST /service-reports`
-
-### Experiencia del técnico
-
-- `GET /technicians/me`
-- `GET /work-orders/assigned-to-me`
-- `GET /technician/dashboard`
-- `PATCH /work-orders/{id}/status`
-- `PATCH /work-orders/{id}/start`
-- `PATCH /work-orders/{id}/complete`
-- `GET /jobs/assigned-to-me`
-- `GET /service-reports/technician/me`
-
-Las acciones de iniciar trabajo, registrar diagnóstico, agregar observaciones, solicitar refacciones
-y generar reportes permanecen deshabilitadas. No se simula éxito ni se reutiliza Work Orders como
-si fuera un Job.
-
-También permanecen pendientes catálogos productivos de servicios y piezas. Las cotizaciones usan el
-payload embebido de snapshots ya soportado; Jobs, Service Reports y PDF continúan deshabilitados y
-no simulan operaciones exitosas.
-
-## Variables de entorno
-
-Copia `.env.example` como `.env` y configura la URL base de la API:
+La única URL base se obtiene de `VITE_API_BASE_URL`. En producción se usa el proxy `/api/v1`; no
+se hardcodean IPs ni se consume `/api/v2`.
 
 ```dotenv
-VITE_API_BASE_URL=http://localhost:8080/api/v1
+VITE_API_BASE_URL=/api/v1
 ```
 
-Para conectarte con el backend desplegado en EC2:
+Los archivos `.env` y `.env.local` son locales y no deben versionarse.
 
-```dotenv
-VITE_API_BASE_URL=http://3.212.179.142:8080/api/v1
-```
+## Rutas públicas
 
-La API EC2 actual está disponible en `http://3.212.179.142:8080/api/v1`.
+- `/`: presentación del producto; la tabla de seguimiento está etiquetada como ejemplo ilustrativo.
+- `/login`: autenticación real mediante `POST /auth/login`.
+- `/register`: información para solicitar una cuenta. No contiene un formulario de registro porque
+  no existe un endpoint público para esa operación.
 
-El archivo `.env` es local y está ignorado por Git. No debe subirse al repositorio ni contener tokens, contraseñas o secretos. `.env.example` sí se conserva como plantilla rastreable.
+No existe tracking público, recuperación de contraseña ni portal CLIENTE en este MVP.
 
-Después de cambiar una variable de entorno, reinicia el servidor de Vite.
+## Administración
 
-## Estructura inicial
+Todas estas rutas requieren rol `ADMINISTRADOR`:
 
-```text
-mechsync-frontend/
-├── .env.example
-├── index.html
-├── package.json
-├── vite.config.js
-└── src/
-    ├── App.jsx
-    ├── index.css
-    ├── main.jsx
-    ├── features/
-    │   └── health/
-    │       └── healthService.js
-    └── shared/
-        └── api/
-            └── apiClient.js
-```
+- Usuarios: `/admin/users`, `/admin/users/new`, `/admin/users/:id`.
+- Clientes: `/admin/customers`, `/admin/customers/new`, `/admin/customers/:id`.
+- Vehículos: `/admin/vehicles`, `/admin/vehicles/new`, `/admin/vehicles/:id`.
+- Técnicos: `/admin/technicians`, `/admin/technicians/new`, `/admin/technicians/:id`.
+- Ingresos: `/admin/vehicle-intakes`, `/admin/vehicle-intakes/new`, `/admin/vehicle-intakes/:id`.
+- Work Orders: `/admin/work-orders`, `/admin/work-orders/new`, `/admin/work-orders/:id`.
+- Cotizaciones versionadas: historial, detalle y `/admin/quotations/new`.
+- Jobs: listado, creación, detalle, workflow y líneas reales.
+- Service Reports: listado, creación desde Job completado, detalle y descarga PDF.
+- Catálogos: `/admin/catalogs`, lectura de servicios, piezas, unidades asociadas y estados.
 
-`apiClient.js` centraliza la URL base, encabezados JSON, respuestas sin contenido, errores de API y soporte para tokens Bearer. Los servicios de cada feature reutilizan este cliente y las rutas administrativas quedan protegidas por el mecanismo común de sesión.
+`/admin` redirige a `/admin/users`. Los catálogos son de solo lectura porque el backend no expone
+operaciones de administración. La creación y edición de perfiles Technician usan usuarios reales y
+el catálogo read-only `GET /specialties`; no se capturan IDs manualmente.
+
+Las cotizaciones permiten seleccionar servicios y piezas reales o capturar un concepto personalizado.
+El backend conserva el snapshot, recalcula importes y controla el workflow inmutable. El PDF de
+cotización no forma parte de esta versión.
+
+## Portal técnico
+
+Estas rutas requieren rol `TECNICO`:
+
+- `/technician`: dashboard con datos autorizados.
+- `/technician/work-orders` y `/technician/work-orders/:id`.
+- `/technician/jobs` y `/technician/jobs/:id`.
+- `/technician/service-reports` y `/technician/service-reports/:id`.
+
+Los listados consumen exclusivamente `/assigned-to-me`. Los detalles, líneas reales y PDF validan
+pertenencia en backend. El frontend no envía `technicianId`, no descarga listados globales y no
+expone mutaciones administrativas.
+
+Los alias `/technician/dashboard` y `/technician/assigned-work-orders` redirigen a sus rutas vigentes.
+
+## Seguridad y errores
+
+- `ProtectedRoute` valida identidad con `GET /auth/me`.
+- Una respuesta `401` a una llamada autenticada limpia la sesión y vuelve a login.
+- `403`, `404`, `409` y `500` se presentan con mensajes controlados.
+- No se almacenan contraseñas, hashes ni datos simulados en el navegador.
+- La autorización y el aislamiento IDOR siempre pertenecen al backend.
+
+## Fuera de esta versión
+
+Portal CLIENTE, registro público, tracking público, recuperación de contraseña, PDF de cotización,
+adjuntos, inventario, proveedores, pagos, correo, S3, firma digital y analítica avanzada.
+
+Consulta [docs/implementation/view-mapping.md](docs/implementation/view-mapping.md) para el inventario
+de vistas y endpoints.

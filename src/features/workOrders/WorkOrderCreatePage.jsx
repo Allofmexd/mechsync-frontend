@@ -207,9 +207,9 @@ export default function WorkOrderCreatePage() {
             </div>
           </section>
 
-          <section className="work-order-section work-order-pending-section">
-            <header><span>03</span><h2>Servicios y piezas planificadas</h2></header>
-            <div><strong>Pendiente de endpoint</strong><p>Las tablas existen en el modelo, pero todavía no hay subrecursos productivos para líneas de servicios o piezas. Esta sección no envía datos ni simula partidas.</p><button type="button" className="admin-button admin-button--secondary" disabled>Agregar servicio o pieza</button></div>
+          <section className="work-order-section">
+            <header><span>03</span><h2>Cotización y partidas</h2></header>
+            <div><strong>Se agregan después de guardar la orden</strong><p>Las partidas autorizables se capturan en una revisión de cotización, usando los catálogos reales o snapshots personalizados.</p></div>
           </section>
         </div>
 

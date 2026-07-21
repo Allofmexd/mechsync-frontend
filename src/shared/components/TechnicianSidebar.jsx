@@ -36,9 +36,8 @@ export default function TechnicianSidebar() {
       <nav className="technician-sidebar__nav" aria-label="Navegación técnica">
         <NavLink to="/technician" end><DashboardIcon /><span>Panel técnico</span></NavLink>
         <NavLink to="/technician/work-orders" end><OrdersIcon /><span>Mis órdenes</span></NavLink>
-        <NavLink to="/technician/assigned-work-orders"><OrdersIcon /><span>Órdenes asignadas</span></NavLink>
-        <span className="technician-sidebar__disabled"><ToolsIcon /><span>Mis trabajos</span><small>Pendiente</small></span>
-        <span className="technician-sidebar__disabled"><ReportsIcon /><span>Reportes técnicos</span><small>Pendiente</small></span>
+        <NavLink to="/technician/jobs"><ToolsIcon /><span>Mis trabajos</span></NavLink>
+        <NavLink to="/technician/service-reports"><ReportsIcon /><span>Mis reportes de servicio</span></NavLink>
       </nav>
       <button className="technician-sidebar__logout" type="button" onClick={logout}><LogoutIcon /><span>Cerrar sesión</span></button>
     </aside>

@@ -354,7 +354,7 @@ export default function JobDetailPage() {
         <span><strong>Cotización aprobada:</strong> autorización y snapshot.</span>
         <span><strong>Job:</strong> ejecución real.</span>
         <span><strong>Servicios y piezas reales:</strong> lo efectivamente realizado o usado.</span>
-        <span><strong>Reporte de servicio:</strong> cierre oficial del trabajo; PDF pendiente.</span>
+        <span><strong>Reporte de servicio:</strong> cierre oficial del trabajo con PDF descargable.</span>
       </div>
 
       {success && <div className="admin-alert admin-alert--success" role="status"><span>✓</span><p>{success}</p></div>}

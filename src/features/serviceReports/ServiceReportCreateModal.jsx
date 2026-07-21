@@ -143,7 +143,7 @@ export default function ServiceReportCreateModal({
           </label>
           <div className="service-report-create-warning" role="note">
             <strong>Antes de continuar</strong>
-            <p>Los importes se copiarán desde el Job. No se modificarán el trabajo, sus líneas reales ni la cotización aprobada. El PDF permanece pendiente.</p>
+            <p>Los importes se copiarán desde el Job. No se modificarán el trabajo, sus líneas reales ni la cotización aprobada. Después de crear el reporte podrás descargar su PDF desde el detalle.</p>
           </div>
           <footer>
             <button className="admin-button admin-button--secondary" type="button" onClick={onClose} disabled={busy}>Cancelar</button>

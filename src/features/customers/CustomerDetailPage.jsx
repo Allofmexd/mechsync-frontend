@@ -160,10 +160,6 @@ export default function CustomerDetailPage() {
           <h2>Información general</h2>
           <dl>
             <div>
-              <dt>Estado de cuenta</dt>
-              <dd><span className="pending-badge">Pendiente de dato</span></dd>
-            </div>
-            <div>
               <dt>Teléfono</dt>
               <dd>{user?.phone || 'No registrado'}</dd>
             </div>
@@ -184,47 +180,17 @@ export default function CustomerDetailPage() {
               <dd>{formatDate(customer.registeredAt)}</dd>
             </div>
           </dl>
-
-          <div className="customer-advisor-note">
-            <span>Nota del asesor</span>
-            <strong>Pendiente de endpoint</strong>
-            <p>La API no expone notas administrativas del cliente.</p>
-          </div>
         </aside>
 
         <div className="customer-detail-content">
-          <div className="customer-detail-tabs" aria-label="Secciones del cliente">
-            <button type="button" className="active">Resumen</button>
-            <button type="button" disabled>Vehículos</button>
-            <button type="button" disabled>Historial</button>
-            <button type="button" disabled>Reportes</button>
-          </div>
-
-          <div className="customer-detail-pending-grid">
-            <article>
-              <span>Servicios activos</span>
-              <strong>Pendiente</strong>
-              <small>Sin endpoint agregado por cliente</small>
-            </article>
-            <article>
-              <span>Último servicio</span>
-              <strong>Pendiente</strong>
-              <small>Sin dato en CustomerResponse</small>
-            </article>
-            <article>
-              <span>Gasto total</span>
-              <strong>Pendiente</strong>
-              <small>Sin endpoint de métricas</small>
-            </article>
-          </div>
-
           <div className="customer-feature-pending">
-            <span className="pending-badge">Pendiente de endpoint</span>
-            <h2>Vehículos, historial y reportes del cliente</h2>
-            <p>
-              La API todavía no ofrece consultas anidadas por Customer. No se muestran resultados
-              parciales de una página global para evitar datos incompletos.
-            </p>
+            <span className="admin-eyebrow">Acciones relacionadas</span>
+            <h2>Continuar el flujo del cliente</h2>
+            <p>Registra un vehículo para este cliente o consulta el inventario administrativo completo.</p>
+            <div className="customer-detail-heading__actions">
+              <Link className="admin-button admin-button--primary" to={`/admin/vehicles/new?customerId=${customer.id}`}>Registrar vehículo</Link>
+              <Link className="admin-button admin-button--secondary" to="/admin/vehicles">Consultar vehículos</Link>
+            </div>
           </div>
         </div>
       </div>

@@ -54,7 +54,7 @@ export default function ServiceReportsListPage() {
       <div className="service-reports-summary">
         <article><span>Total de reportes</span><strong>{pageData.totalElements}</strong><small>Dato reportado por la API</small></article>
         <article><span>Página actual</span><strong>{pageData.totalPages ? pageData.page + 1 : 0}</strong><small>de {pageData.totalPages} páginas</small></article>
-        <article><span>Documento PDF</span><strong>Pendiente</strong><small>Se implementará en una fase posterior</small></article>
+        <article><span>Documento PDF</span><strong>Disponible</strong><small>Descarga autenticada desde el detalle</small></article>
       </div>
 
       <div className="service-reports-context" role="note">

@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useOutletContext, useParams } from 'react-router-dom';
-import { getApiErrorMessage } from '../../shared/api/apiErrorMessages';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { getWorkOrderById } from '../workOrders/workOrdersService';
-import TechnicianWorkspaceState from './TechnicianWorkspaceState';
-import useTechnicianWorkspace from './useTechnicianWorkspace';
+import { getTechnicianResourceErrorMessage } from './technicianResourceUtils';
 import useWorkOrderRelations from './useWorkOrderRelations';
 import './technician.css';
 
@@ -24,52 +22,47 @@ function formatMoney(value) {
 }
 
 export default function TechnicianWorkOrderDetailPage() {
-  const { currentUser } = useOutletContext();
   const { id } = useParams();
-  const workspace = useTechnicianWorkspace(currentUser?.id);
-  const assignedOrder = workspace.workOrders.find((item) => String(item.id) === String(id));
   const [order, setOrder] = useState(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [detailError, setDetailError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
+  const reload = useCallback(() => setReloadKey((value) => value + 1), []);
 
   useEffect(() => {
     let active = true;
-    if (!assignedOrder) {
-      setOrder(null);
-      return () => { active = false; };
-    }
 
     async function loadDetail() {
-      setDetailLoading(true);
-      setDetailError('');
+      setLoading(true);
+      setError('');
       try {
-        const detail = unwrap(await getWorkOrderById(assignedOrder.id));
+        const detail = unwrap(await getWorkOrderById(id));
         if (active) setOrder(detail);
       } catch (requestError) {
-        if (active) setDetailError(getApiErrorMessage(requestError, 'No fue posible cargar el detalle de la orden.'));
+        if (active) {
+          setOrder(null);
+          setError(getTechnicianResourceErrorMessage(requestError, 'la orden solicitada'));
+        }
       } finally {
-        if (active) setDetailLoading(false);
+        if (active) setLoading(false);
       }
     }
 
     loadDetail();
     return () => { active = false; };
-  }, [assignedOrder?.id]);
+  }, [id, reloadKey]);
 
   const relationOrders = useMemo(() => (order ? [order] : []), [order]);
   const relations = useWorkOrderRelations(relationOrders);
 
-  if (workspace.loading || workspace.error || !workspace.technician) {
-    return <TechnicianWorkspaceState {...workspace} />;
+  if (loading || relations.loading) {
+    return <div className="technician-state" role="status"><span className="technician-loader" aria-hidden="true" /><p>Cargando detalle de la orden...</p></div>;
   }
-  if (!assignedOrder) {
-    return <div className="technician-state technician-state--warning"><strong>Orden no asignada</strong><p>La orden solicitada no está asignada al técnico autenticado y no se mostrará como propia.</p><Link className="admin-button admin-button--secondary" to="/technician/assigned-work-orders">Volver a mis órdenes</Link></div>;
+  if (error) {
+    return <div className="technician-state technician-state--error" role="alert"><strong>Orden no disponible</strong><p>{error}</p><div className="technician-state__actions"><button className="admin-button admin-button--primary" type="button" onClick={reload}>Reintentar</button><Link className="admin-button admin-button--secondary" to="/technician/work-orders">Volver a mis órdenes</Link></div></div>;
   }
-  if (detailLoading || relations.loading) return <div className="technician-state"><span className="technician-loader" /><p>Cargando detalle de la orden...</p></div>;
-  if (detailError) return <div className="technician-state technician-state--error"><strong>Error al cargar</strong><p>{detailError}</p></div>;
   if (!order) return <div className="technician-state">Orden no encontrada.</div>;
 
-  const status = workspace.statuses.find((item) => String(item.id) === String(order.statusId));
   const intake = relations.intakes[order.vehicleIntakeId];
   const vehicle = intake ? relations.vehicles[intake.vehicleId] : null;
   const customer = vehicle ? relations.customers[vehicle.customerId] : null;
@@ -79,16 +72,10 @@ export default function TechnicianWorkOrderDetailPage() {
       <div className="technician-breadcrumb"><Link to="/technician">Panel técnico</Link><span>›</span><Link to="/technician/work-orders">Mis órdenes</Link><span>›</span><strong>OT-{order.id}</strong></div>
       <div className="technician-order-detail-heading">
         <div><p className="admin-eyebrow">Orden asignada</p><h1>Folio OT-{order.id}</h1></div>
-        <span className="technician-status">{status?.name || `Estado #${order.statusId}`}</span>
+        <span className="technician-status">Estado #{order.statusId}</span>
       </div>
 
       {relations.warning && <div className="technician-inline-warning">{relations.warning}</div>}
-
-      <div className="technician-order-detail-actions">
-        <button type="button" disabled title="Pendiente de endpoint para observaciones">Agregar observación</button>
-        <button type="button" disabled title="Pendiente de endpoint para diagnóstico">Registrar diagnóstico</button>
-        <button type="button" disabled title="Pendiente de endpoint para iniciar Job">Iniciar trabajo</button>
-      </div>
 
       <div className="technician-order-detail-layout">
         <div className="technician-order-detail-main">
@@ -103,14 +90,14 @@ export default function TechnicianWorkOrderDetailPage() {
             <section className="technician-detail-card"><header><h2>Observaciones iniciales</h2></header><p>{intake?.initialObservations || 'Sin observaciones registradas.'}</p></section>
           </div>
 
-          <section className="technician-detail-card technician-detail-pending"><header><h2>Servicios y refacciones planeadas</h2><span>Pendiente de API</span></header><p>No existen subrecursos productivos de servicios o piezas para esta Work Order.</p><button className="admin-button admin-button--secondary" type="button" disabled>Solicitar refacción</button></section>
+          <section className="technician-detail-card"><header><h2>Servicios y refacciones planeadas</h2></header><p>El contrato técnico actual de Work Orders no incluye líneas planeadas. Esta vista no consulta subrecursos administrativos.</p></section>
           <section className="technician-detail-card"><header><h2>Observaciones técnicas de la orden</h2></header><p>{order.technicalObservations || 'Sin observaciones técnicas registradas.'}</p></section>
         </div>
 
         <aside className="technician-order-detail-side">
           <section><h2>Cronograma</h2><dl><div><dt>Fecha de ingreso</dt><dd>{formatDate(intake?.intakeDate)}</dd></div><div><dt>Fecha de orden</dt><dd>{formatDate(order.workOrderDate)}</dd></div><div><dt>Inicio estimado</dt><dd>{formatDate(order.estimatedStartDate)}</dd></div><div><dt>Entrega estimada</dt><dd>{formatDate(order.estimatedDeliveryDate)}</dd></div><div><dt>Horas estimadas</dt><dd>{order.estimatedHours ?? 'Dato no disponible'}</dd></div></dl></section>
           <section><h2>Estimación</h2><dl><div><dt>Subtotal</dt><dd>{formatMoney(order.estimatedSubtotal)}</dd></div><div><dt>IVA</dt><dd>{formatMoney(order.estimatedIva)}</dd></div><div className="technician-detail-total"><dt>Total</dt><dd>{formatMoney(order.estimatedTotal)}</dd></div></dl></section>
-          <section className="technician-detail-pending"><h2>Trabajo ejecutado</h2><span>Pendiente de API</span><p>Iniciar, completar y reportar requiere Jobs y Service Reports.</p><button type="button" disabled>Generar reporte</button></section>
+          <section><h2>Trabajo ejecutado</h2><p>Consulta los Jobs y cierres que el servidor asignó a tu perfil.</p><div className="technician-related-links"><Link to="/technician/jobs">Mis trabajos</Link><Link to="/technician/service-reports">Mis reportes</Link></div></section>
         </aside>
       </div>
     </section>

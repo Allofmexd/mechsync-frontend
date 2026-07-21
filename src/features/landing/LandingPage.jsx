@@ -42,7 +42,7 @@ const processSteps = [
 const previewRows = [
   ['Recepción y diagnóstico', 'Completado', 'Listo'],
   ['Revisión técnica', 'En proceso', '14:45'],
-  ['Instalación y pruebas', 'Pendiente', 'Próxima etapa'],
+  ['Instalación y pruebas', 'Por iniciar', 'Siguiente etapa operativa'],
 ];
 
 function LandingPage() {
@@ -84,8 +84,8 @@ function LandingPage() {
             </div>
             <div className="transmission-visual__shaft transmission-visual__shaft--right" />
             <div className="precision-card">
-              <strong>98% precisión</strong>
-              <span>Procesos claros para cada servicio.</span>
+              <strong>Control operativo</strong>
+              <span>Procesos documentados para cada servicio.</span>
             </div>
           </div>
         </section>
@@ -136,7 +136,7 @@ function LandingPage() {
                 <span>Vista de operación</span>
                 <h2>Seguimiento claro en cada etapa</h2>
               </div>
-              <span className="tracking-preview__tag">Orden activa</span>
+              <span className="tracking-preview__tag">Ejemplo ilustrativo</span>
             </div>
 
             <div className="tracking-preview__table" role="table" aria-label="Ejemplo de seguimiento">
@@ -169,8 +169,8 @@ function LandingPage() {
             <div className="tracking-aside__light">
               <strong>Preparado para crecer</strong>
               <p>
-                La plataforma integrará progresivamente clientes, vehículos, ingresos y
-                órdenes de trabajo.
+                La plataforma integra clientes, vehículos, ingresos, órdenes, trabajos y
+                reportes de servicio en un flujo administrativo.
               </p>
             </div>
           </aside>

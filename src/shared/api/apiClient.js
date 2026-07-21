@@ -1,3 +1,5 @@
+import { clearAuthToken } from '../storage/authStorage';
+
 const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
 
 export const API_BASE_URL = configuredBaseUrl?.replace(/\/+$/, '') ?? '';
@@ -70,6 +72,12 @@ export async function apiFetch(path, options = {}) {
   const data = await parseResponse(response);
 
   if (!response.ok) {
+    if (response.status === 401 && token) {
+      clearAuthToken();
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        window.location.replace('/login?reason=session-expired');
+      }
+    }
     const apiMessage =
       data && typeof data === 'object'
         ? data.message ?? data.error ?? data.detail ?? data.data?.message

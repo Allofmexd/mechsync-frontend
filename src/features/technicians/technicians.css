@@ -1,0 +1,14 @@
+.technician-admin-page { display: grid; gap: 1.25rem; }
+.technician-admin-form, .technician-profile-card { background: #fff; border: 1px solid #dbe3ec; border-radius: 16px; padding: 1.25rem; box-shadow: 0 10px 30px rgba(15, 35, 55, .06); }
+.technician-admin-form { display: grid; gap: 1rem; }
+.technician-admin-form label { display: grid; gap: .4rem; color: #334155; font-weight: 700; }
+.technician-admin-form input, .technician-admin-form select { width: 100%; border: 1px solid #cbd5e1; border-radius: 10px; padding: .75rem; background: #fff; color: #0f172a; }
+.technician-admin-form footer { display: flex; flex-wrap: wrap; gap: .75rem; }
+.technician-admin-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: 1rem; align-items: start; }
+.technician-profile-card h2, .technician-admin-form h2 { margin-top: 0; }
+.technician-profile-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.technician-profile-card dl div { border-radius: 10px; background: #f8fafc; padding: .8rem; }
+.technician-profile-card dt { color: #64748b; font-size: .78rem; text-transform: uppercase; }
+.technician-profile-card dd { margin: .25rem 0 0; color: #0f172a; font-weight: 700; overflow-wrap: anywhere; }
+.directory-grid article > .table-action-link { display: inline-flex; margin-top: 1rem; }
+@media (max-width: 800px) { .technician-admin-grid { grid-template-columns: 1fr; } .technician-profile-card dl { grid-template-columns: 1fr; } }

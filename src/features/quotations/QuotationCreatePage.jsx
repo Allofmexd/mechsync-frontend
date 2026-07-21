@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getApiErrorMessage } from '../../shared/api/apiErrorMessages';
+import { getAllPartsCatalog, getAllServicesCatalog } from '../catalogs/catalogsService';
 import { getTechnicians } from '../technicians/techniciansService';
 import {
   calculateRevisionAmounts,
@@ -22,6 +23,7 @@ function newLine() {
   localLineSequence += 1;
   return {
     localId: `line-${localLineSequence}`,
+    catalogId: '',
     nameSnapshot: '',
     descriptionSnapshot: '',
     quantity: '1',
@@ -41,7 +43,7 @@ function technicianName(technician) {
     || `Técnico #${technician?.id}`;
 }
 
-function SnapshotLines({ title, type, lines, disabled, onChange }) {
+function SnapshotLines({ title, type, lines, catalog, disabled, onChange }) {
   function addLine() {
     onChange([...lines, newLine()]);
   }
@@ -52,6 +54,21 @@ function SnapshotLines({ title, type, lines, disabled, onChange }) {
 
   function removeLine(localId) {
     onChange(lines.filter((line) => line.localId !== localId));
+  }
+
+  function selectCatalog(localId, catalogId) {
+    const selected = catalog.find((item) => String(item.id) === catalogId);
+    onChange(lines.map((line) => {
+      if (line.localId !== localId) return line;
+      if (!selected) return { ...line, catalogId: '' };
+      return {
+        ...line,
+        catalogId,
+        nameSnapshot: selected.name || '',
+        descriptionSnapshot: selected.description || '',
+        unitPrice: String(type === 'service' ? selected.basePrice ?? '0.0000' : selected.unitPrice ?? '0.0000'),
+      };
+    }));
   }
 
   return (
@@ -70,12 +87,19 @@ function SnapshotLines({ title, type, lines, disabled, onChange }) {
               <button type="button" onClick={() => removeLine(line.localId)} disabled={disabled}>Eliminar</button>
             </div>
             <label className="revision-field revision-field--wide">
-              <span>Nombre snapshot *</span>
-              <input value={line.nameSnapshot} maxLength="150" onChange={(event) => updateLine(line.localId, 'nameSnapshot', event.target.value)} disabled={disabled} required />
+              <span>{type === 'service' ? 'Servicio del catálogo' : 'Pieza del catálogo'}</span>
+              <select value={line.catalogId} onChange={(event) => selectCatalog(line.localId, event.target.value)} disabled={disabled}>
+                <option value="">Captura personalizada</option>
+                {catalog.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+              </select>
+            </label>
+            <label className="revision-field revision-field--wide">
+              <span>Nombre snapshot {line.catalogId ? '' : '*'}</span>
+              <input value={line.nameSnapshot} maxLength="150" onChange={(event) => updateLine(line.localId, 'nameSnapshot', event.target.value)} disabled={disabled || Boolean(line.catalogId)} required={!line.catalogId} />
             </label>
             <label className="revision-field revision-field--wide">
               <span>Descripción</span>
-              <input value={line.descriptionSnapshot} onChange={(event) => updateLine(line.localId, 'descriptionSnapshot', event.target.value)} disabled={disabled} />
+              <input value={line.descriptionSnapshot} onChange={(event) => updateLine(line.localId, 'descriptionSnapshot', event.target.value)} disabled={disabled || Boolean(line.catalogId)} />
             </label>
             <label className="revision-field">
               <span>Cantidad *</span>
@@ -104,6 +128,8 @@ export default function QuotationCreatePage() {
     : '';
   const [workOrders, setWorkOrders] = useState([]);
   const [technicians, setTechnicians] = useState([]);
+  const [serviceCatalog, setServiceCatalog] = useState([]);
+  const [partCatalog, setPartCatalog] = useState([]);
   const [selectedWorkOrderId, setSelectedWorkOrderId] = useState(validRequestedId);
   const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
   const [revisionCount, setRevisionCount] = useState(null);
@@ -123,7 +149,9 @@ export default function QuotationCreatePage() {
     currency: 'MXN',
     applyIva: true,
     ivaRate: '0.160000',
+    taxTreatmentNotes: '',
     technicalObservations: '',
+    customerNotes: '',
     changeReason: '',
   });
 
@@ -133,9 +161,11 @@ export default function QuotationCreatePage() {
       setLoading(true);
       setLoadError('');
       try {
-        const [ordersResponse, techniciansResponse] = await Promise.all([
+        const [ordersResponse, techniciansResponse, servicesResponse, partsResponse] = await Promise.all([
           getWorkOrders({ page: 0, size: 100 }),
           getTechnicians(),
+          getAllServicesCatalog(),
+          getAllPartsCatalog(),
         ]);
         let availableOrders = unwrapCollection(ordersResponse);
         if (validRequestedId && !availableOrders.some((order) => String(order.id) === validRequestedId)) {
@@ -149,6 +179,8 @@ export default function QuotationCreatePage() {
         if (active) {
           setWorkOrders(availableOrders);
           setTechnicians(unwrapCollection(techniciansResponse));
+          setServiceCatalog(unwrapCollection(servicesResponse));
+          setPartCatalog(unwrapCollection(partsResponse));
         }
       } catch (error) {
         if (active) setLoadError(getApiErrorMessage(error, 'No fue posible cargar Work Orders y técnicos.'));
@@ -232,23 +264,24 @@ export default function QuotationCreatePage() {
       setSubmitError('Las horas estimadas deben ser no negativas y tener máximo 4 decimales.');
       return;
     }
-    const invalidLine = [...services, ...parts].some((line) => !line.nameSnapshot.trim());
+    const invalidLine = [...services, ...parts].some((line) => !line.catalogId && !line.nameSnapshot.trim());
     if (invalidLine) {
       setSubmitError('Cada línea personalizada requiere un nombre snapshot.');
       return;
     }
 
     let amountIndex = 0;
-    const mapLine = (line, index) => {
+    const mapLine = (line, index, catalogKey) => {
       const payload = {
         lineNumber: index + 1,
-        nameSnapshot: line.nameSnapshot.trim(),
         quantity: line.quantity,
         unitPrice: line.unitPrice,
         lineSubtotal: amounts.lineSubtotals[amountIndex],
       };
       amountIndex += 1;
-      if (line.descriptionSnapshot.trim()) payload.descriptionSnapshot = line.descriptionSnapshot.trim();
+      if (line.catalogId) payload[catalogKey] = Number(line.catalogId);
+      else payload.nameSnapshot = line.nameSnapshot.trim();
+      if (!line.catalogId && line.descriptionSnapshot.trim()) payload.descriptionSnapshot = line.descriptionSnapshot.trim();
       if (line.notes.trim()) payload.notes = line.notes.trim();
       return payload;
     };
@@ -260,10 +293,11 @@ export default function QuotationCreatePage() {
       subtotalAmount: amounts.subtotalAmount,
       ivaAmount: amounts.ivaAmount,
       totalAmount: amounts.totalAmount,
-      services: services.map(mapLine),
-      parts: parts.map(mapLine),
+      services: services.map((line, index) => mapLine(line, index, 'serviceId')),
+      parts: parts.map((line, index) => mapLine(line, index, 'partId')),
     };
-    ['estimatedStartDate', 'estimatedDeliveryDate', 'estimatedHours', 'technicalObservations', 'changeReason']
+    ['estimatedStartDate', 'estimatedDeliveryDate', 'estimatedHours', 'taxTreatmentNotes',
+      'technicalObservations', 'customerNotes', 'changeReason']
       .forEach((field) => {
         const value = String(form[field] ?? '').trim();
         if (value) payload[field] = value;
@@ -289,7 +323,7 @@ export default function QuotationCreatePage() {
       <div className="admin-breadcrumb"><Link to="/admin/work-orders">Órdenes de servicio</Link><span>›</span><strong>Nueva cotización</strong></div>
       <div className="work-orders-heading">
         <div><p className="admin-eyebrow">Cotización versionada</p><h1>Nueva cotización</h1><p>Crea una revisión inmutable y respaldada por la API real.</p></div>
-        <span className={revisionApiReady ? 'work-order-integration' : 'work-order-integration work-order-integration--blocked'}>{checkingRevisions ? 'Validando API' : revisionApiReady ? 'API disponible' : 'Requiere migración/API'}</span>
+        <span className={revisionApiReady ? 'work-order-integration' : 'work-order-integration work-order-integration--blocked'}>{checkingRevisions ? 'Validando API' : revisionApiReady ? 'API disponible' : 'API no disponible'}</span>
       </div>
 
       {loadError && <div className="admin-alert admin-alert--error" role="alert"><span>!</span><p>{loadError}</p></div>}
@@ -316,13 +350,15 @@ export default function QuotationCreatePage() {
               <label className="revision-field"><span>Entrega estimada</span><input type="datetime-local" value={form.estimatedDeliveryDate} onChange={(event) => updateForm('estimatedDeliveryDate', event.target.value)} disabled={submitting} /></label>
               <label className="revision-field"><span>Horas estimadas</span><input type="number" min="0" step="0.0001" value={form.estimatedHours} onChange={(event) => updateForm('estimatedHours', event.target.value)} disabled={submitting} /></label>
               <label className="revision-field revision-field--wide"><span>Observaciones técnicas</span><textarea value={form.technicalObservations} onChange={(event) => updateForm('technicalObservations', event.target.value)} disabled={submitting} /></label>
+              <label className="revision-field revision-field--wide"><span>Notas para el cliente</span><textarea value={form.customerNotes} onChange={(event) => updateForm('customerNotes', event.target.value)} disabled={submitting} /></label>
+              <label className="revision-field revision-field--wide"><span>Notas de tratamiento fiscal</span><textarea value={form.taxTreatmentNotes} onChange={(event) => updateForm('taxTreatmentNotes', event.target.value)} disabled={submitting} /></label>
               {revisionCount > 0 && <label className="revision-field revision-field--wide"><span>Motivo del cambio *</span><textarea maxLength="500" value={form.changeReason} onChange={(event) => updateForm('changeReason', event.target.value)} disabled={submitting} required /></label>}
             </div>
           </section>
 
-          <div className="admin-alert work-order-info" role="status"><span>i</span><p>Los catálogos productivos de servicios y piezas siguen pendientes. Puedes capturar snapshots personalizados sin IDs o dejar las listas vacías; no se inventan identificadores.</p></div>
-          <SnapshotLines title="Servicios snapshot" type="service" lines={services} onChange={setServices} disabled={submitting} />
-          <SnapshotLines title="Piezas snapshot" type="part" lines={parts} onChange={setParts} disabled={submitting} />
+          <div className="admin-alert work-order-info" role="status"><span>i</span><p>Selecciona servicios y piezas del catálogo real para precargar su información, o usa captura personalizada cuando el concepto no exista. El backend conserva el snapshot histórico.</p></div>
+          <SnapshotLines title="Servicios snapshot" type="service" lines={services} catalog={serviceCatalog} onChange={setServices} disabled={submitting} />
+          <SnapshotLines title="Piezas snapshot" type="part" lines={parts} catalog={partCatalog} onChange={setParts} disabled={submitting} />
         </div>
 
         <aside className="revision-totals">

@@ -74,6 +74,14 @@ function CatalogIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16M8 4v4M16 10v4M10 16v4" /></svg>;
 }
 
+function DashboardIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z" />
+    </svg>
+  );
+}
+
 export default function AdminSidebar() {
   const navigate = useNavigate();
 
@@ -91,6 +99,10 @@ export default function AdminSidebar() {
 
       <nav className="admin-sidebar__nav" aria-label="Navegación administrativa">
         <span className="admin-sidebar__group">Administración</span>
+        <NavLink to="/admin/dashboard">
+          <DashboardIcon />
+          <span>Dashboard</span>
+        </NavLink>
         <NavLink to="/admin/users">
           <UsersIcon />
           <span>Usuarios</span>
@@ -135,7 +147,7 @@ export default function AdminSidebar() {
         <span className="admin-sidebar__group">Catálogos</span>
         <NavLink to="/admin/catalogs">
           <CatalogIcon />
-          <span>Estados</span>
+          <span>Catálogos</span>
         </NavLink>
 
       </nav>

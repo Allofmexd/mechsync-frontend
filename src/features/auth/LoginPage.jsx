@@ -9,8 +9,10 @@ function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [status, setStatus] = useState({ type: 'idle', message: '' });
-  const [trackingMessage, setTrackingMessage] = useState('');
+  const sessionExpired = new URLSearchParams(location.search).get('reason') === 'session-expired';
+  const [status, setStatus] = useState(sessionExpired
+    ? { type: 'error', message: 'Tu sesión expiró. Inicia sesión nuevamente.' }
+    : { type: 'idle', message: '' });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -42,16 +44,21 @@ function LoginPage() {
         : [];
       const isAdministrator = roles.includes('ADMINISTRADOR');
       const isTechnician = roles.includes('TECNICO');
+      const isCustomer = roles.includes('CLIENTE');
       let destination = '/';
 
       if (requestedPath?.startsWith('/technician') && isTechnician) {
         destination = requestedPath;
       } else if (requestedPath?.startsWith('/admin') && isAdministrator) {
         destination = requestedPath;
+      } else if (requestedPath?.startsWith('/customer') && isCustomer) {
+        destination = requestedPath;
       } else if (isTechnician) {
-        destination = '/technician';
+        destination = '/technician/dashboard';
       } else if (isAdministrator) {
-        destination = '/admin/customers';
+        destination = '/admin/dashboard';
+      } else if (isCustomer) {
+        destination = '/customer';
       }
 
       navigate(destination, {
@@ -72,11 +79,6 @@ function LoginPage() {
         passwordInput.value = '';
       }
     }
-  };
-
-  const handleTrackingSubmit = (event) => {
-    event.preventDefault();
-    setTrackingMessage('La consulta pública de órdenes estará disponible próximamente.');
   };
 
   const isLoading = status.type === 'loading';
@@ -132,29 +134,17 @@ function LoginPage() {
       </form>
 
       <p className="auth-switch">
-        ¿No tienes cuenta? <Link to="/register">Registrarte</Link>
+        ¿No tienes cuenta? <Link to="/register">Consulta cómo solicitar acceso</Link>
       </p>
 
       <div className="auth-divider" aria-hidden="true">
         <span>o</span>
       </div>
 
-      <form className="tracking-form" onSubmit={handleTrackingSubmit}>
-        <strong>¿Eres cliente?</strong>
-        <p>Ingresa tu número de orden para consultar el estado de tu reparación.</p>
-        <label className="sr-only" htmlFor="order-number">
-          Número de orden
-        </label>
-        <input id="order-number" name="orderNumber" placeholder="Ej: TX-9942" required />
-        <button className="button button--secondary" type="submit">
-          Consultar estado
-        </button>
-        {trackingMessage && (
-          <p className="tracking-form__message" aria-live="polite">
-            {trackingMessage}
-          </p>
-        )}
-      </form>
+      <section className="tracking-form" aria-labelledby="client-access-title">
+        <strong id="client-access-title">Acceso para clientes</strong>
+        <p>El seguimiento público de órdenes no forma parte de esta versión. El taller comunicará el avance por sus canales autorizados.</p>
+      </section>
     </PublicLayout>
   );
 }

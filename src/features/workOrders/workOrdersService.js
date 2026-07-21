@@ -13,7 +13,7 @@ export function getWorkOrders({ page = 0, size = 20 } = {}) {
   });
 }
 
-export function getAssignedWorkOrders({ page = 0, size = 20 } = {}) {
+export function getAssignedWorkOrders({ page = 0, size = 20, signal } = {}) {
   const searchParams = new URLSearchParams({
     page: String(page),
     size: String(size),
@@ -22,6 +22,7 @@ export function getAssignedWorkOrders({ page = 0, size = 20 } = {}) {
   return apiFetch(`/work-orders/assigned-to-me?${searchParams.toString()}`, {
     method: 'GET',
     token: getRequiredAuthToken(),
+    signal,
   });
 }
 

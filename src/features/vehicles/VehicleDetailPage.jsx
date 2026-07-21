@@ -136,13 +136,11 @@ export default function VehicleDetailPage() {
           </dl>
         </div>
         <aside className="vehicle-detail-aside">
-          <span className="pending-badge">Pendiente de endpoint/dato</span>
-          <h2>Estado e historial de servicio</h2>
-          <p>
-            VehicleResponse no incluye estado actual, último ingreso ni historial. Estos datos no
-            se infieren ni se inventan.
-          </p>
-          <Link to={`/admin/customers/${vehicle.customerId}`}>Ver Customer #{vehicle.customerId}</Link>
+          <span className="admin-eyebrow">Navegación relacionada</span>
+          <h2>Seguimiento operativo</h2>
+          <p>Registra un ingreso para iniciar el flujo del taller o consulta al cliente propietario.</p>
+          <Link to={`/admin/vehicle-intakes/new?vehicleId=${vehicle.id}`}>Registrar nuevo ingreso</Link>
+          <Link to={`/admin/customers/${vehicle.customerId}`}>Ver cliente #{vehicle.customerId}</Link>
         </aside>
       </div>
     </section>

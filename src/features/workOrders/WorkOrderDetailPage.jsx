@@ -157,7 +157,7 @@ export default function WorkOrderDetailPage() {
           <WorkOrderRevisionsPanel workOrderId={id} />
 
           <section className="work-order-detail-card work-order-lines-pending">
-            <header><h2>Adjuntos y evidencia</h2><span>Pendiente de API</span></header>
+            <header><h2>Adjuntos y evidencia</h2><span>Fuera de esta versión</span></header>
             <p>No existe un endpoint documentado de archivos o reportes para esta orden.</p>
           </section>
         </div>

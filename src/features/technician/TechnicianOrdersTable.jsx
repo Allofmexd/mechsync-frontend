@@ -7,42 +7,50 @@ function formatDate(value) {
   return new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium' }).format(date);
 }
 
-function statusClass(code) {
-  return String(code || 'default').toLocaleLowerCase('es').replaceAll('_', '-');
+function formatMoney(value) {
+  if (value === null || value === undefined || value === '') return 'Dato no disponible';
+  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value));
 }
 
-export default function TechnicianOrdersTable({
-  workOrders,
-  statuses,
-  intakes,
-  vehicles,
-  customers,
-  showPendingActions = false,
-}) {
-  const statusMap = new Map(statuses.map((status) => [String(status.id), status]));
-
+export default function TechnicianOrdersTable({ workOrders }) {
   return (
     <div className="technician-orders-table-wrap">
       <table className="technician-orders-table">
-        <thead><tr><th>Folio</th><th>Vehículo</th><th>Cliente</th><th>Problema reportado</th><th>Entrega estimada</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <caption className="technician-visually-hidden">Órdenes asignadas de la página actual</caption>
+        <thead>
+          <tr>
+            <th>Orden</th>
+            <th>Ingreso</th>
+            <th>Fecha de orden</th>
+            <th>Entrega estimada</th>
+            <th>Horas</th>
+            <th>Estado</th>
+            <th>Total estimado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
         <tbody>
-          {workOrders.map((order) => {
-            const intake = intakes[order.vehicleIntakeId];
-            const vehicle = intake ? vehicles[intake.vehicleId] : null;
-            const customer = vehicle ? customers[vehicle.customerId] : null;
-            const status = statusMap.get(String(order.statusId));
-            return (
-              <tr key={order.id}>
-                <td><strong>OT-{order.id}</strong><small>ING-{order.vehicleIntakeId}</small></td>
-                <td><strong>{vehicle ? `${vehicle.brand} ${vehicle.model}` : 'Dato no disponible'}</strong><small>{vehicle?.licensePlate || 'Placa no disponible'}</small></td>
-                <td><strong>{vehicle?.customerId ? `Cliente #${vehicle.customerId}` : 'Dato no disponible'}</strong><small>{customer?.address || 'Nombre no expuesto por API'}</small></td>
-                <td>{intake?.reportedProblem || 'Dato no disponible'}</td>
-                <td>{formatDate(order.estimatedDeliveryDate)}</td>
-                <td><span className={`technician-status technician-status--${statusClass(status?.code)}`}>{status?.name || `Estado #${order.statusId}`}</span></td>
-                <td><div className="technician-order-actions"><Link to={`/technician/work-orders/${order.id}`}>Ver detalle</Link>{showPendingActions && <button type="button" disabled title="Pendiente de endpoint PATCH para iniciar trabajo">Iniciar trabajo</button>}</div></td>
-              </tr>
-            );
-          })}
+          {workOrders.map((order) => (
+            <tr key={order.id}>
+              <td><strong>OT-{order.id}</strong></td>
+              <td>ING-{order.vehicleIntakeId}</td>
+              <td>{formatDate(order.workOrderDate)}</td>
+              <td>{formatDate(order.estimatedDeliveryDate)}</td>
+              <td>{order.estimatedHours ?? 'Dato no disponible'}</td>
+              <td><span className="technician-status">Estado #{order.statusId}</span></td>
+              <td><strong>{formatMoney(order.estimatedTotal)}</strong></td>
+              <td>
+                <div className="technician-order-actions">
+                  <Link
+                    to={`/technician/work-orders/${order.id}`}
+                    aria-label={`Ver detalle de la orden OT-${order.id}`}
+                  >
+                    Ver detalle
+                  </Link>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

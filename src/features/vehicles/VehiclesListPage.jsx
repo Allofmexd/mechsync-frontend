@@ -103,10 +103,10 @@ export default function VehiclesListPage() {
           <strong>{totalPages ? currentPage + 1 : 0}</strong>
           <small>de {totalPages} páginas</small>
         </article>
-        <article className="vehicles-stats__pending">
-          <span>Estado en taller</span>
-          <strong>Pendiente</strong>
-          <small>VehicleResponse no incluye estado de servicio</small>
+        <article>
+          <span>Vista operativa</span>
+          <strong>Vehículos</strong>
+          <small>Ingresos y órdenes se consultan en sus módulos</small>
         </article>
       </div>
 
@@ -121,12 +121,6 @@ export default function VehiclesListPage() {
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Buscar por placa, marca, modelo, VIN o ID"
             />
-          </label>
-          <label className="vehicles-pending-filter">
-            <span>Estado de servicio</span>
-            <select disabled title="VehicleResponse no incluye estado">
-              <option>Pendiente de endpoint/dato</option>
-            </select>
           </label>
           <button
             className="admin-button admin-button--secondary"

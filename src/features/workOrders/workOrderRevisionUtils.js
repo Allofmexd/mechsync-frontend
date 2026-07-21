@@ -9,9 +9,6 @@ export const REVISION_STATUS_LABELS = {
   CANCELLED: 'Cancelada',
 };
 
-export const MIGRATION_PENDING_MESSAGE =
-  'La API de cotizaciones requiere migraciones de base de datos pendientes en este entorno.';
-
 export function unwrapApiData(response) {
   return response?.data ?? response;
 }
@@ -29,7 +26,7 @@ export function unwrapRevisionPage(response) {
 }
 
 export function getRevisionErrorMessage(error, fallback) {
-  if (error?.status >= 500) return MIGRATION_PENDING_MESSAGE;
+  if (error?.status >= 500) return 'El servidor no pudo completar la operación de cotización. Intenta nuevamente.';
   if (error?.status === 400) return getApiErrorMessage(error, 'Revisa los datos de la cotización.');
   if (error?.status === 404) return getApiErrorMessage(error, 'La orden o revisión ya no está disponible.');
   if (error?.status === 409) return getApiErrorMessage(error, 'Transición inválida o conflicto de concurrencia. Recarga las revisiones.');
