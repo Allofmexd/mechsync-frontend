@@ -2,15 +2,49 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getApiErrorMessage } from '../../shared/api/apiErrorMessages';
 import { getCustomers } from '../customers/customersService';
+import { getUsers } from '../users/usersService';
 import { createVehicle } from './vehiclesService';
 import './vehicles.css';
 
 const MAX_YEAR = new Date().getFullYear() + 1;
 
+function readData(response) {
+  return response?.data ?? response ?? {};
+}
+
+function readContent(response) {
+  const data = readData(response);
+  return Array.isArray(data) ? data : data.content ?? [];
+}
+
+async function loadAllUsers() {
+  const firstResponse = await getUsers({ page: 0, size: 100 });
+  const firstPage = readData(firstResponse);
+  const content = readContent(firstResponse);
+  const totalPages = Number(firstPage.totalPages ?? (content.length ? 1 : 0));
+  if (totalPages <= 1) return content;
+  const remaining = await Promise.all(
+    Array.from({ length: totalPages - 1 }, (_, index) => (
+      getUsers({ page: index + 1, size: 100 })
+    )),
+  );
+  return [...content, ...remaining.flatMap(readContent)];
+}
+
+function fullName(user) {
+  return [user?.firstName, user?.lastName].filter(Boolean).join(' ');
+}
+
+function customerLabel(user) {
+  return [fullName(user), user?.email, user?.phone].filter(Boolean).join(' — ')
+    || 'Cliente sin datos de contacto';
+}
+
 export default function VehicleCreatePage() {
   const [searchParams] = useSearchParams();
   const formRef = useRef(null);
   const [customers, setCustomers] = useState([]);
+  const [usersById, setUsersById] = useState(new Map());
   const [selectedCustomerId, setSelectedCustomerId] = useState(searchParams.get('customerId') || '');
   const [loadingCustomers, setLoadingCustomers] = useState(true);
   const [customersWarning, setCustomersWarning] = useState('');
@@ -20,11 +54,15 @@ export default function VehicleCreatePage() {
 
   useEffect(() => {
     let active = true;
-    getCustomers({ page: 0, size: 100 })
-      .then((response) => {
+    Promise.all([
+      getCustomers({ page: 0, size: 100 }),
+      loadAllUsers(),
+    ])
+      .then(([response, users]) => {
         if (!active) return;
-        const data = response?.data ?? response;
+        const data = readData(response);
         setCustomers(Array.isArray(data?.content) ? data.content : []);
+        setUsersById(new Map(users.map((user) => [Number(user.id), user])));
         if (Number(data?.totalPages ?? 0) > 1) {
           setCustomersWarning('El selector muestra los primeros 100 clientes disponibles.');
         }
@@ -42,6 +80,13 @@ export default function VehicleCreatePage() {
       active = false;
     };
   }, []);
+
+  const selectedCustomer = customers.find(
+    (customer) => String(customer.id) === selectedCustomerId,
+  );
+  const selectedUser = selectedCustomer
+    ? usersById.get(Number(selectedCustomer.userId))
+    : null;
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -85,7 +130,7 @@ export default function VehicleCreatePage() {
         <div>
           <p className="admin-eyebrow">Gestión de vehículos</p>
           <h1>Registrar vehículo</h1>
-          <p>Asocia el vehículo a un Customer existente.</p>
+          <p>Asocia el vehículo a un cliente existente.</p>
         </div>
       </div>
 
@@ -112,21 +157,32 @@ export default function VehicleCreatePage() {
         <fieldset disabled={submitting || loadingCustomers}>
           <div className="vehicle-form__grid">
             <label className="vehicle-form__full">
-              <span>Customer propietario *</span>
+              <span>Cliente propietario *</span>
               <select
                 value={selectedCustomerId}
                 onChange={(event) => setSelectedCustomerId(event.target.value)}
                 required
               >
-                <option value="">Selecciona un Customer</option>
+                <option value="">Selecciona un cliente</option>
                 {customers.map((customer) => (
                   <option key={customer.id} value={customer.id}>
-                    Customer #{customer.id} · User #{customer.userId} · {customer.address || 'sin dirección'}
+                    {customerLabel(usersById.get(Number(customer.userId)))}
                   </option>
                 ))}
               </select>
               {customersWarning && <small>{customersWarning}</small>}
             </label>
+            {selectedCustomer && (
+              <section className="vehicle-form__full vehicle-owner-summary" aria-label="Resumen del cliente propietario">
+                <h3>Cliente seleccionado</h3>
+                <dl>
+                  <div><dt>Nombre completo</dt><dd>{fullName(selectedUser) || 'Sin nombre registrado'}</dd></div>
+                  <div><dt>Correo</dt><dd>{selectedUser?.email || 'Sin correo registrado'}</dd></div>
+                  <div><dt>Teléfono</dt><dd>{selectedUser?.phone || 'Sin teléfono registrado'}</dd></div>
+                  <div><dt>Dirección</dt><dd>{selectedCustomer.address || 'Sin dirección registrada'}</dd></div>
+                </dl>
+              </section>
+            )}
             <label><span>Marca *</span><input name="brand" maxLength="80" required /></label>
             <label><span>Modelo *</span><input name="model" maxLength="80" required /></label>
             <label>
